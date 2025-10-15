@@ -29,7 +29,7 @@ system = build_machine.system()
 if system == 'linux'
   compile_args += '-DLINUX'
 elif system == 'darwin'
-  compile_args += '-DLINUX'
+  compile_args += '-DAPPLE'
 elif system == 'windows'
   compile_args += ['-DCPU86', '-DNO_TIMER']
 endif

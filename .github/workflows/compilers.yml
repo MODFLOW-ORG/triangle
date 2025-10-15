@@ -92,12 +92,10 @@ jobs:
         run: |
           pixi run test
       
-      - name: Upload test log
+      - name: Show test log
         if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: ${ostag}-testlog.txt
-          path: triangle/builddir/meson-logs/testlog.txt
+        working-directory: triangle
+        run: cat builddir/meson-logs/testlog.txt
 
       - name: Create zip file on MacOS and Linux
         if: ${{ matrix.release == 'yes' && runner.os != 'Windows' }}
