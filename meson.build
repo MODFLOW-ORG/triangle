@@ -25,6 +25,15 @@ if cc_id == 'intel'
   link_args += ['-diag-disable=10441']
 endif
 
+system = build_machine.system()
+if system == 'linux'
+  compile_args += '-DLINUX'
+elif system == 'darwin'
+  compile_args += '-DAPPLE'
+elif system == 'windows'
+  compile_args += ['-DWIN32', '-DNO_TIMER']
+endif
+
 add_project_arguments(cc.get_supported_arguments(compile_args), language: 'c')
 add_project_link_arguments(cc.get_supported_arguments(link_args), language: 'c')
 
