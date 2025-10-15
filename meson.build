@@ -15,7 +15,8 @@ message('Compiler ID:', cc_id)
 
 compile_args = []
 link_args = []
-if fc_id == 'gcc'
+
+if cc_id == 'gcc'
   link_args += ['-lm']
 endif
 
