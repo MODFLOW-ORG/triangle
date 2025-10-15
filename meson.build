@@ -31,7 +31,7 @@ if system == 'linux'
 elif system == 'darwin'
   compile_args += '-DAPPLE'
 elif system == 'windows'
-  compile_args += ['-DCPU86', '-DNO_TIMER']
+  compile_args += ['-DCPU86', '-DNO_TIMER', '-DWINDOWS']
 endif
 
 add_project_arguments(cc.get_supported_arguments(compile_args), language: 'c')
