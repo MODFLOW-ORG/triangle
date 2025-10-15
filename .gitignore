@@ -1,0 +1,4 @@
+.pixi/
+bin/
+builddir/
+test/A.1*
