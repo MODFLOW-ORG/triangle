@@ -29,9 +29,9 @@ system = build_machine.system()
 if system == 'linux'
   compile_args += '-DLINUX'
 elif system == 'darwin'
-  compile_args += '-DAPPLE'
+  compile_args += '-DLINUX'
 elif system == 'windows'
-  compile_args += ['-DWIN32', '-DNO_TIMER']
+  compile_args += ['-DCPU86', '-DNO_TIMER']
 endif
 
 add_project_arguments(cc.get_supported_arguments(compile_args), language: 'c')
