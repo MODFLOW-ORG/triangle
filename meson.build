@@ -47,6 +47,6 @@ test('help',
 
 test('sample', 
      exe,
-     args : ['-p', 'A'],
+     args : ['-p', 'A.poly'],
      workdir: meson.current_source_dir()/'test')
 
