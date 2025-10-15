@@ -17,7 +17,7 @@ compile_args = []
 link_args = []
 if fc_id == 'gcc'
   link_args += ['-lm']
-end if
+endif
 
 if cc_id == 'intel'
   compile_args += ['-diag-disable=10441']
