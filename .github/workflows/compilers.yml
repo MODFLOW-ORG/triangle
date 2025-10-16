@@ -97,6 +97,13 @@ jobs:
         working-directory: triangle
         run: cat builddir/meson-logs/testlog.txt
 
+      - name: Create source zip file on Linux
+        if: ${{ matrix.release == 'yes' && runner.os == 'Linux' }}
+        working-directory: triangle
+        run: |
+          zip -r source.zip meson.build src/ test/*.poly
+          ls -lha *.zip
+
       - name: Create zip file on MacOS and Linux
         if: ${{ matrix.release == 'yes' && runner.os != 'Windows' }}
         working-directory: triangle
