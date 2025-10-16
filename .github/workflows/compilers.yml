@@ -101,7 +101,7 @@ jobs:
         if: ${{ matrix.release == 'yes' && runner.os == 'Linux' }}
         working-directory: triangle
         run: |
-          zip -r triangle.zip meson.build src/ test/*.poly
+          zip -r triangle.zip meson.build src/ test/A.poly
           ls -lha *.zip
 
       - name: Create zip file on MacOS and Linux
