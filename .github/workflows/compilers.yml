@@ -125,7 +125,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ${{ env.DIST }}-${{ matrix.os }}
-          path: t${{ env.PROGRAM_NAME }}/*.zip
+          path: ${{ env.PROGRAM_NAME }}/*.zip
 
   release:
     name: Make release
