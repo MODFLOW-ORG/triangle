@@ -70,7 +70,7 @@ jobs:
           echo "ostag=$(pixi run get-ostag)" >> $GITHUB_ENV
 
       - name: Build ${{ env.PROGRAM_NAME }}
-        working-directory: t${{ env.PROGRAM_NAME }}
+        working-directory: ${{ env.PROGRAM_NAME }}
         run: |
           pixi run setup
           pixi run build
