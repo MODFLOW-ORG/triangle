@@ -24,18 +24,18 @@ jobs:
       matrix:
         include:
           # test latest gcc
-          - {os: ubuntu-latest, compiler: gcc, version: 13, shell: bash, release: no}
-          - {os: macos-14, compiler: gcc, version: 13, shell: bash, release: yes}
-          - {os: macos-15-intel, compiler: gcc, version: 13, shell: bash, release: yes}          
-          - {os: windows-latest, compiler: gcc, version: 13, shell: pwsh, release: no}
+          - {os: ubuntu-latest, compiler: gcc, version: 13, shell: bash, release: no, libpath: no}
+          - {os: macos-14, compiler: gcc, version: 13, shell: bash, release: yes, libpath: "/opt/homebrew"}
+          - {os: macos-15-intel, compiler: gcc, version: 13, shell: bash, release: yes, libpath: "/usr/local"}          
+          - {os: windows-latest, compiler: gcc, version: 13, shell: pwsh, release: no, libpath: no}
           # test intel-classic
-          - {os: ubuntu-22.04, compiler: intel-classic, version: 2021.7, shell: bash, release: no}
+          - {os: ubuntu-22.04, compiler: intel-classic, version: 2021.7, shell: bash, release: no, libpath: no}
           # test previous gcc
-          - {os: ubuntu-latest, compiler: gcc, version: 12, shell: bash, release: no}
-          - {os: ubuntu-latest, compiler: gcc, version: 11, shell: bash, release: no}
+          - {os: ubuntu-latest, compiler: gcc, version: 12, shell: bash, release: no, libpath: no}
+          - {os: ubuntu-latest, compiler: gcc, version: 11, shell: bash, release: no, libpath: no}
           # test ifx
-          - {os: ubuntu-22.04, compiler: intel, version: "2025.0", shell: bash, release: yes}
-          - {os: windows-2022, compiler: intel, version: "2025.0", shell: pwsh, release: yes}
+          - {os: ubuntu-22.04, compiler: intel, version: "2025.0", shell: bash, release: yes, libpath: no}
+          - {os: windows-2022, compiler: intel, version: "2025.0", shell: pwsh, release: yes, libpath: no}
     defaults:
       run:
         shell: ${{ matrix.shell }}
@@ -65,11 +65,11 @@ jobs:
           echo "ostag=$(pixi run get-ostag)" >> $GITHUB_ENV
 
       - name: Hide dylibs on macOS
-        if: runner.os == 'macOS'
+        if: ${{ runner.os == 'macOS' && matrix.os == 'macos-14' }}
         working-directory: ${{ env.PROGRAM_NAME }}
         run: |
           version=${{ matrix.version }}
-          libpath="/opt/homebrew/opt/gcc@$version/lib/gcc/$version"
+          libpath="${{ matrix.libpath }}/opt/gcc@$version/lib/gcc/$version"
           mv $libpath/libgfortran.5.dylib $libpath/libgfortran.5.dylib.bak 
           mv $libpath/libquadmath.0.dylib $libpath/libquadmath.0.dylib.bak
           mv $libpath/libstdc++.6.dylib $libpath/libstdc++.6.dylib.bak
