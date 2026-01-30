@@ -65,7 +65,7 @@ jobs:
           echo "ostag=$(pixi run get-ostag)" >> $GITHUB_ENV
 
       - name: Hide dylibs on macOS
-        if: ${{ runner.os == 'macOS' && matrix.os == 'macos-14' }}
+        if: runner.os == 'macOS'
         working-directory: ${{ env.PROGRAM_NAME }}
         run: |
           version=${{ matrix.version }}
