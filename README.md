@@ -1,4 +1,7 @@
 # triangle
+
+[![triangle checks](https://github.com/MODFLOW-ORG/triangle/actions/workflows/ci.yml/badge.svg)](https://github.com/MODFLOW-ORG/triangle/actions/workflows/ci.yml)
+
 A Two-Dimensional Quality Mesh Generator and Delaunay Triangulator.
 Version 1.6
 
