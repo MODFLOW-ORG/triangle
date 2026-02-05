@@ -75,6 +75,7 @@ jobs:
           mv $libpath/libgcc_s.1.1.dylib $libpath/libgcc_s.1.1.dylib.bak
           mv $libpath/libgfortran.5.dylib $libpath/libgfortran.5.dylib.bak
           mv $libpath/libquadmath.0.dylib $libpath/libquadmath.0.dylib.bak 
+          mv $libpath/libstdc++.6.dylib $libpath/libstdc++.6.dylib.bak
       
       # static link libgcc
       - name: Set LDFLAGS (macOS)
