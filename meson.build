@@ -17,12 +17,17 @@ compile_args = []
 link_args = []
 
 if cc_id == 'gcc'
+  compile_args += ['-fexcess-precision=standard', '-ffp-contract=off']
   link_args += ['-lm']
 endif
 
 if cc_id == 'intel'
-  compile_args += ['-diag-disable=10441']
+  compile_args += ['-diag-disable=10441', '-fp-model=precise']
   link_args += ['-diag-disable=10441']
+endif
+
+if cc_id == 'intel-llvm'
+  compile_args += ['-fp-model=precise']
 endif
 
 system = build_machine.system()
