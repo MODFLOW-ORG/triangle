@@ -7,7 +7,6 @@ project(
   default_options : [
     'b_vscrt=static_from_buildtype', # Link runtime libraries statically on Windows
     'buildtype=release',
-    'c_std=c17',
 ])
 
 cc = meson.get_compiler('c')
