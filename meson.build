@@ -17,7 +17,7 @@ compile_args = []
 link_args = []
 
 if cc_id == 'gcc'
-  compile_args += ['-fexcess-precision=standard', '-ffp-contract=off']
+  compile_args += ['-std=gnu17', '-fexcess-precision=standard', '-ffp-contract=off']
   link_args += ['-lm']
 endif
 
