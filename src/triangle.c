@@ -269,8 +269,11 @@
 /* #define CPU86 */
 /* #define LINUX */
 
+#if defined(__aarch64__) || defined(__arm__)
+#define INEXACT volatile
+#else
 #define INEXACT /* Nothing */
-/* #define INEXACT volatile */
+#endif
 
 /* Maximum number of characters in a file name (including the null).         */
 
