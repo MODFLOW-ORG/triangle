@@ -1,7 +1,12 @@
-/* Calling Triangle as a library with errors returned to the caller.         */
-/* Not part of the Triangle distribution; see README.md.                     */
+/* Triangle library API that returns errors; not part of Triangle. */
 
 #include <setjmp.h>
+#ifdef CPU86
+#include <float.h>
+#endif
+#ifdef LINUX
+#include <fpu_control.h>
+#endif
 
 #include "triangle_release.h"
 #include "triangle_status.h"
@@ -22,13 +27,34 @@ int triangulate_status(char *triswitches, struct triangulateio *in,
                        struct triangulateio *out,
                        struct triangulateio *vorout)
 {
+  /* exactinit() changes the control word; restore the caller's */
+#ifdef CPU86
+  unsigned int control = _control87(0, 0);
+#endif
+#ifdef LINUX
+  fpu_control_t control;
+  _FPU_GETCW(control);
+#endif
+
   triexitstatus = 0;
   if (setjmp(triexitjump) == 0) {
     triexithandler = triexitreturn;
     triangulate(triswitches, in, out, vorout);
   }
   triexithandler = (void (*)(int)) 0;
+
+#ifdef CPU86
+  _control87(control, _MCW_PC);
+#endif
+#ifdef LINUX
+  _FPU_SETCW(control);
+#endif
   return triexitstatus;
+}
+
+void triangle_free(void *memptr)
+{
+  trifree(memptr);
 }
 
 const char *triangle_version(void)

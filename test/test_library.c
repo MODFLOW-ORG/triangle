@@ -1,11 +1,18 @@
-/* Test calling Triangle through the library: triangulate a unit square, */
-/* refine the result, and return an error without exiting.               */
+/* Test the Triangle library API. */
 
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
+#ifdef CPU86
+#include <float.h>
+#endif
+#ifdef LINUX
+#include <fpu_control.h>
+#endif
+
+#include "triangle_release.h"
 #include "triangle_status.h"
 
 static int failures = 0;
@@ -35,18 +42,21 @@ static double mesh_area(struct triangulateio *mesh)
 
 static void free_output(struct triangulateio *mesh)
 {
-  trifree((VOID *) mesh->pointlist);
-  trifree((VOID *) mesh->pointmarkerlist);
-  trifree((VOID *) mesh->trianglelist);
-  trifree((VOID *) mesh->segmentlist);
-  trifree((VOID *) mesh->segmentmarkerlist);
+  triangle_free(mesh->pointlist);
+  triangle_free(mesh->pointmarkerlist);
+  triangle_free(mesh->trianglelist);
+  triangle_free(mesh->segmentlist);
+  triangle_free(mesh->segmentmarkerlist);
+  triangle_free(mesh->edgelist);
+  triangle_free(mesh->edgemarkerlist);
+  triangle_free(mesh->normlist);
 }
 
 int main(void)
 {
   double square[8] = {0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0};
   int edges[8] = {0, 1, 1, 2, 2, 3, 3, 0};
-  struct triangulateio in, mesh, refined, bad, out;
+  struct triangulateio in, mesh, refined, bad, out, direct, voronoi;
   double *area_limit;
   int status;
   int i;
@@ -58,7 +68,24 @@ int main(void)
   in.pointlist = square;
   in.numberofsegments = 4;
   in.segmentlist = edges;
+#ifdef CPU86
+  {
+    unsigned int before = _control87(0, 0);
+    status = triangulate_status("pzQa0.05", &in, &mesh, NULL);
+    check((_control87(0, 0) & _MCW_PC) == (before & _MCW_PC),
+          "floating-point precision is restored");
+  }
+#elif defined(LINUX)
+  {
+    fpu_control_t before, after;
+    _FPU_GETCW(before);
+    status = triangulate_status("pzQa0.05", &in, &mesh, NULL);
+    _FPU_GETCW(after);
+    check(after == before, "floating-point control word is restored");
+  }
+#else
   status = triangulate_status("pzQa0.05", &in, &mesh, NULL);
+#endif
   check(status == 0, "triangulate the unit square");
   check(mesh.numberoftriangles >= 20, "area limit produces >= 20 triangles");
   check(fabs(mesh_area(&mesh) - 1.0) < 1.0e-12, "triangles cover the square");
@@ -85,6 +112,9 @@ int main(void)
   bad.pointlist = square;
   status = triangulate_status("zQ", &bad, &out, NULL);
   check(status != 0, "two vertices return an error status");
+  memset(&out, 0, sizeof(out));
+  status = triangulate_status("zQ", &bad, &out, NULL);
+  check(status != 0, "a second error returns an error status");
 
   /* the library still works after an error */
   free_output(&refined);
@@ -94,12 +124,32 @@ int main(void)
   check(refined.numberoftriangles == mesh.numberoftriangles,
         "same mesh after an error");
 
+  /* triangulate() gives the same mesh */
+  memset(&direct, 0, sizeof(direct));
+  triangulate("pzQa0.05", &in, &direct, NULL);
+  check(direct.numberoftriangles == mesh.numberoftriangles,
+        "triangulate() gives the same mesh");
+
+  /* the Voronoi diagram has a vertex for each triangle */
+  memset(&out, 0, sizeof(out));
+  memset(&voronoi, 0, sizeof(voronoi));
+  status = triangulate_status("pzQeva0.05", &in, &out, &voronoi);
+  check(status == 0, "write the Voronoi diagram");
+  check(voronoi.numberofpoints == out.numberoftriangles,
+        "one Voronoi vertex for each triangle");
+  check(out.numberofedges > 0 && voronoi.numberofedges == out.numberofedges,
+        "one Voronoi edge for each triangle edge");
+  free_output(&out);
+  free_output(&voronoi);
+
   free_output(&mesh);
   free_output(&refined);
+  free_output(&direct);
 
   /* version and copyright */
   check(strcmp(triangle_version(), "1.6") == 0, "Triangle version is 1.6");
-  check(strlen(triangle_release_version()) > 0, "release version is set");
+  check(strcmp(triangle_release_version(), TRIANGLE_RELEASE_VERSION) == 0,
+        "release version is the version in meson.build");
   check(strstr(triangle_copyright(), "Jonathan Richard Shewchuk") != NULL,
         "copyright names the author");
 

@@ -25,8 +25,9 @@ Run from the project root. Pixi is the canonical workflow and matches CI.
 - `src/triangle_status.c`, `src/triangle_status.h` — not part of Triangle:
   the library API that returns errors (`triangulate_status()`) and reports
   the versions and copyright (see Library in `README.md`).
-  `src/triangle.def` lists the functions the Windows DLL exports; add a new
-  API function to it.
+  The shared library exports only the API: add a new API function to
+  `src/triangle.def` (Windows), `src/triangle.map` (Linux), and
+  `src/triangle.exports` (macOS).
 - `meson.build` — the project, the compiler and platform flags, and the
   tests; `src/meson.build` builds the executable, the library, and the
   `triangle` dependency for use as a subproject.
