@@ -1,0 +1,2 @@
+section = "build"
+description = """An executable for Intel Macs is no longer released; the macOS executable is for Apple silicon only (#23)."""

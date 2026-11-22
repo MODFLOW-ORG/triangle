@@ -20,5 +20,9 @@ build = "meson install -C builddir"
 # test triangle
 test = { cmd = "meson test --verbose --no-rebuild -C builddir" }
 
+# release note items (changes/)
+check-release-notes = "python scripts/release_notes.py check"
+release-notes = "python scripts/release_notes.py notes"
+
 # get ostag for system
 get-ostag = { cmd = "python -c 'from modflow_devtools.ostags import get_ostag; print(get_ostag())'"} 

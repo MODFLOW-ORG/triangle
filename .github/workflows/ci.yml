@@ -181,6 +181,15 @@ jobs:
         run: |
           echo "PROGRAM_VERSION=$(grep -oE "([0-9]{1,}\.)+[0-9]{1,}" meson.build | head -n 1)" >> $GITHUB_ENV          
 
+      - name: Check release note items
+        working-directory: ${{ env.PROGRAM_NAME }}
+        run: python3 scripts/release_notes.py check
+
+      - name: Write release description
+        if: github.event_name == 'workflow_dispatch'
+        working-directory: ${{ env.PROGRAM_NAME }}
+        run: python3 scripts/release_notes.py notes --version "$PROGRAM_VERSION" > release-notes.md
+
       - name: Download distribution
         uses: actions/download-artifact@v8
         with:
@@ -199,6 +208,7 @@ jobs:
           tag: v${{ env.PROGRAM_VERSION }}
           name: "${{ env.PROGRAM_NAME }} executables"
           artifacts: "${{ env.DIST }}/*"
+          bodyFile: "${{ env.PROGRAM_NAME }}/release-notes.md"
           draft: false
           allowUpdates: true
           token: ${{ secrets.GITHUB_TOKEN }}

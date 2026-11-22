@@ -1,0 +1,2 @@
+section = "build"
+description = """Triangle is compiled so that its arithmetic is the same with every compiler (no extended precision or fused multiply-add), so the meshes are as consistent as possible across platforms. A mesh may differ slightly from one made with 1.6 (#23)."""
