@@ -43,7 +43,10 @@ static double mesh_area(struct triangulateio *mesh)
 static void free_output(struct triangulateio *mesh)
 {
   triangle_free(mesh->pointlist);
+  triangle_free(mesh->pointattributelist);
   triangle_free(mesh->pointmarkerlist);
+  triangle_free(mesh->triangleattributelist);
+  triangle_free(mesh->neighborlist);
   triangle_free(mesh->trianglelist);
   triangle_free(mesh->segmentlist);
   triangle_free(mesh->segmentmarkerlist);
