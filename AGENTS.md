@@ -10,7 +10,8 @@ repeating them; follow those instead of re-deriving a command.
 Run from the project root. Pixi is the canonical workflow and matches CI.
 
 - **Configure the build directory:** `pixi run setup`
-- **Build** (installs to `bin/`): `pixi run build`
+- **Build** (installs the executable to `bin/`, the library to `lib/`, and
+  the headers to `include/`): `pixi run build`
 - **Run the tests:** `pixi run test`; it does not rebuild, so run
   `pixi run build` first
 - **Remove the build directory:** `pixi run clean`
