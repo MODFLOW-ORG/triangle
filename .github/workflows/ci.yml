@@ -111,7 +111,14 @@ jobs:
         run: |
           otool -L triangle
           lipo -info triangle
-          otool -l triangle | grep -A4 LC_BUILD_VERSION | grep -q "minos $MACOSX_DEPLOYMENT_TARGET"
+          for file in triangle ../lib/libtriangle.dylib; do
+            minos=$(otool -l "$file" | awk '/LC_BUILD_VERSION/ {found = 1} found && $1 == "minos" {print $2; exit}')
+            echo "$file: minimum macOS $minos"
+            if [ "$minos" != "$MACOSX_DEPLOYMENT_TARGET" ]; then
+              echo "$file: minimum macOS $minos differs from MACOSX_DEPLOYMENT_TARGET $MACOSX_DEPLOYMENT_TARGET"
+              exit 1
+            fi
+          done
 
       - name: Show build log
         if: failure()
