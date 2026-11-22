@@ -150,7 +150,11 @@ Run from the project root. Pixi is the canonical workflow and matches CI.
   log shows what it links. Pin the build runner images to a version
   (`ubuntu-22.04`, not `ubuntu-latest`), since the image sets the oldest
   system the executables run on, and replace an image before GitHub retires
-  it.
+  it. On macOS, `MACOSX_DEPLOYMENT_TARGET` in `ci.yml` sets the oldest
+  version instead (15.0), and the macOS job checks the `minos` of the
+  executable and the library against it; changing the runner image does
+  not change it. Raise it only on purpose, when Apple stops supporting that
+  version, with a release note item.
 - **Test integrity:** do not make a test pass by weakening it. State the
   reason for a `test()` removed from `meson.build`, a matrix entry removed
   from `ci.yml`, or a `continue-on-error`, and report such changes when
