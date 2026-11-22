@@ -34,6 +34,15 @@ int triangulate_status(const char *triswitches, struct triangulateio *in,
                        struct triangulateio *out,
                        struct triangulateio *vorout);
 
+/* Test for the u switch: return nonzero if the triangle with these corners
+   and area should be refined. */
+typedef int (*triangle_unsuitable_test)(const double *org, const double *dest,
+                                        const double *apex, double area,
+                                        void *data);
+
+/* Set the u switch's test and the data passed to it; NULL clears it. */
+void triangle_set_unsuitable(triangle_unsuitable_test test, void *data);
+
 /* Free an output array Triangle allocated. */
 void triangle_free(void *memptr);
 

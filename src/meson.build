@@ -36,7 +36,7 @@ lib = library(
               'triangle.c',
               'triangle_status.c',
               release_header,
-              c_args: ['-DTRILIBRARY', '-DANSI_DECLARATORS'],
+              c_args: ['-DTRILIBRARY', '-DANSI_DECLARATORS', '-DEXTERNAL_TEST'],
               dependencies: m_dep,
               name_prefix: 'lib',
               vs_module_defs: 'triangle.def',

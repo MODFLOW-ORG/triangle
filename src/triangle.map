@@ -4,6 +4,7 @@
     triangulate_status;
     trifree;
     triangle_free;
+    triangle_set_unsuitable;
     triangle_version;
     triangle_release_version;
     triangle_copyright;

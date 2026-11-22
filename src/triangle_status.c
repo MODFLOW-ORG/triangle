@@ -13,6 +13,9 @@
 
 extern void (*triexithandler)(int);
 
+static triangle_unsuitable_test unsuitabletest = (triangle_unsuitable_test) 0;
+static void *unsuitabledata = (void *) 0;
+
 static jmp_buf triexitjump;
 static int triexitstatus;
 
@@ -97,4 +100,21 @@ const char *triangle_copyright(void)
     "free, then you are not required to make any arrangement with me.)\n"
     "\n"
     "Modified by MODFLOW-ORG; see https://github.com/MODFLOW-ORG/triangle.\n";
+}
+
+void triangle_set_unsuitable(triangle_unsuitable_test test, void *data)
+{
+  unsuitabletest = test;
+  unsuitabledata = data;
+}
+
+/* Triangle calls this for the u switch, since the library is built with
+   EXTERNAL_TEST; with no test set, no triangle is refined for it. */
+int triunsuitable(double *triorg, double *tridest, double *triapex,
+                  double area)
+{
+  if (unsuitabletest == (triangle_unsuitable_test) 0) {
+    return 0;
+  }
+  return unsuitabletest(triorg, tridest, triapex, area, unsuitabledata);
 }

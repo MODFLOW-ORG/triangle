@@ -40,6 +40,40 @@ static double mesh_area(struct triangulateio *mesh)
   return area;
 }
 
+static double angle_at(const double *a, const double *b, const double *c)
+{
+  double ux = b[0] - a[0], uy = b[1] - a[1];
+  double vx = c[0] - a[0], vy = c[1] - a[1];
+  return acos((ux * vx + uy * vy) / (hypot(ux, uy) * hypot(vx, vy))) *
+         180.0 / 3.14159265358979323846;
+}
+
+static double largest_angle(const double *a, const double *b, const double *c)
+{
+  return fmax(angle_at(a, b, c), fmax(angle_at(b, c, a), angle_at(c, a, b)));
+}
+
+static double mesh_largest_angle(struct triangulateio *mesh)
+{
+  double largest = 0.0;
+  int i;
+  for (i = 0; i < mesh->numberoftriangles; i++) {
+    int *corner = &mesh->trianglelist[3 * i];
+    largest = fmax(largest, largest_angle(&mesh->pointlist[2 * corner[0]],
+                                          &mesh->pointlist[2 * corner[1]],
+                                          &mesh->pointlist[2 * corner[2]]));
+  }
+  return largest;
+}
+
+/* u switch test: refine triangles with an angle over the limit in data */
+static int angle_over_limit(const double *org, const double *dest,
+                            const double *apex, double area, void *data)
+{
+  (void) area;
+  return largest_angle(org, dest, apex) > *(double *) data;
+}
+
 static void free_output(struct triangulateio *mesh)
 {
   triangle_free(mesh->pointlist);
@@ -60,6 +94,11 @@ int main(void)
   double square[8] = {0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0};
   int edges[8] = {0, 1, 1, 2, 2, 3, 3, 0};
   struct triangulateio in, mesh, refined, bad, out, direct, voronoi;
+  double polygon[16] = {0.0, 0.0, 10.0, 0.0, 10.0, 3.0, 7.0, 3.0,
+                        6.0, 8.0, 2.0, 9.0, 1.0, 4.0, 0.0, 2.0};
+  int polygon_edges[16] = {0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 0};
+  double angle_limit = 100.0;
+  int plain_count;
   double *area_limit;
   int status;
   int i;
@@ -148,6 +187,33 @@ int main(void)
   free_output(&mesh);
   free_output(&refined);
   free_output(&direct);
+
+  /* the u switch refines with the caller's test, and does nothing without */
+  memset(&in, 0, sizeof(in));
+  in.numberofpoints = 8;
+  in.pointlist = polygon;
+  in.numberofsegments = 8;
+  in.segmentlist = polygon_edges;
+  memset(&out, 0, sizeof(out));
+  status = triangulate_status("pzQq30a0.5", &in, &out, NULL);
+  check(status == 0 && mesh_largest_angle(&out) > angle_limit,
+        "the polygon has an angle over the limit");
+  plain_count = out.numberoftriangles;
+  free_output(&out);
+  memset(&out, 0, sizeof(out));
+  status = triangulate_status("pzQq30a0.5u", &in, &out, NULL);
+  check(status == 0 && out.numberoftriangles == plain_count,
+        "the u switch without a test changes nothing");
+  free_output(&out);
+  triangle_set_unsuitable(angle_over_limit, &angle_limit);
+  memset(&out, 0, sizeof(out));
+  status = triangulate_status("pzQq30a0.5u", &in, &out, NULL);
+  triangle_set_unsuitable(NULL, NULL);
+  check(status == 0 && mesh_largest_angle(&out) <= angle_limit,
+        "refining by largest angle meets the limit");
+  check(fabs(mesh_area(&out) - 58.0) < 1.0e-9,
+        "refining by largest angle keeps the area");
+  free_output(&out);
 
   /* version and copyright */
   check(strcmp(triangle_version(), "1.6") == 0, "Triangle version is 1.6");
