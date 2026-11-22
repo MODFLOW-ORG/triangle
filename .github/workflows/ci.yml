@@ -111,6 +111,7 @@ jobs:
         run: |
           otool -L triangle
           lipo -info triangle
+          otool -L ../lib/libtriangle.dylib
           for file in triangle ../lib/libtriangle.dylib; do
             minos=$(otool -l "$file" | awk '/LC_BUILD_VERSION/ {found = 1} found && $1 == "minos" && !done {print $2; done = 1}')
             echo "$file: minimum macOS $minos"
@@ -154,8 +155,9 @@ jobs:
         if: ${{ matrix.release == 'yes' && runner.os != 'Windows' }}
         working-directory: ${{ env.PROGRAM_NAME }}
         run: |
-          zip -r -j ${ostag}.zip bin/
-          ls -lha *.zip
+          (cd bin && zip -r ../${ostag}.zip .)
+          zip -r ${ostag}.zip lib include
+          unzip -l ${ostag}.zip
 
       - name: Create zip file on Windows
         if: ${{ matrix.release == 'yes' && runner.os == 'Windows' }}
@@ -163,6 +165,7 @@ jobs:
         run: |
           $ZipFileName = "$env:ostag.zip"
           Compress-Archive -Path "bin\*" -DestinationPath $ZipFileName
+          Compress-Archive -Path "lib", "include" -Update -DestinationPath $ZipFileName
           ls *.zip
 
       - name: Upload distribution archive

@@ -119,7 +119,9 @@ Run from the project root. Pixi is the canonical workflow and matches CI.
   finding the author can neither fix nor show to be wrong, which is left
   for the maintainer to decide.
 - **Version:** the version is set in both `meson.build` and `pixi.toml`;
-  change them together.
+  change them together. It is Triangle's version (1.6) with a third number
+  that counts the releases of this repository (1.6.1); Triangle's own
+  version, which `triangle -h` and `triangle_version()` report, stays 1.6.
 - **Release notes:** a pull request that changes what a user runs, gets
   back, reads, or compiles (the executable, the library and its API, the
   meshes, the release archives, or the README and license) adds a TOML item
@@ -132,14 +134,16 @@ Run from the project root. Pixi is the canonical workflow and matches CI.
   moves the items into a `CHANGELOG.md` entry. After it is merged, run the
   `triangle checks` workflow on `main` by hand (`workflow_dispatch`). Its
   release job collects the archives of the matrix entries with `release:
-  yes`, named by `pixi run get-ostag`, and the source archive, and creates or
-  updates release `v<version>` with the version read from `meson.build` and
-  the `CHANGELOG.md` entry as its description. Scheduled and push runs build
-  the archives but do not release them. Running the workflow again for a
-  version that is already released replaces that release's files and
-  description; do it only to repair a failed release, never to ship a
-  change, which gets a new version (the 1.6 files were rebuilt in place on
-  2026-05-26, so they no longer match the 1.6 tag).
+  yes`, named by `pixi run get-ostag`, each holding the executable at the
+  top level with the library in `lib/` (the Windows DLL beside the
+  executable) and the headers in `include/`, and the source archive, and
+  creates or updates release `v<version>` with the version read from
+  `meson.build` and the `CHANGELOG.md` entry as its description. Scheduled
+  and push runs build the archives but do not release them. Running the
+  workflow again for a version that is already released replaces that
+  release's files and description; do it only to repair a failed release,
+  never to ship a change, which gets a new version (the 1.6 files were
+  rebuilt in place on 2026-05-26, so they no longer match the 1.6 tag).
 - **CI:** `.github/workflows/ci.yml` builds and tests on Linux, macOS, and
   Windows with the compilers in its matrix, on every push, on pull requests
   to `main`, and daily at 06:00 UTC. The gcc and Intel compilers come from

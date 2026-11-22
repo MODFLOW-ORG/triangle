@@ -1,7 +1,7 @@
 project(
   'triangle',
   ['c'],
-  version: '1.6',
+  version: '1.6.1',
   license: 'Copyright 1993, 1995, 1997, 1998, 2002, 2005 Jonathan Richard Shewchuk',
   meson_version: '>= 1.3.1',
   default_options : [

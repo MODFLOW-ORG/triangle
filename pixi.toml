@@ -2,7 +2,7 @@
 name = "triangle"
 channels = ["conda-forge"]
 platforms = ["win-64", "linux-64", "linux-aarch64", "osx-arm64", "osx-64"]
-version = "1.6"
+version = "1.6.1"
 
 [dependencies]
 python = ">=3.11"
