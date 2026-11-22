@@ -16,5 +16,12 @@ Additional information on triangle can be found at [https://www.cs.cmu.edu/~quak
 
 Downloaded from https://www.netlib.org/voronoi/triangle.zip on July 5, 2023.
 
-This repository was created to facilitate automatic builds of triangle used in GitHub Actions CI workflows. Only the `triangle.c`, `triangle.h`, and `README` files, which are available in [https://www.netlib.org/voronoi/triangle.zip](https://www.netlib.org/voronoi/triangle.zip0), have been included in this repository.
+This repository was created to facilitate automatic builds of triangle used in GitHub Actions CI workflows. Only the `triangle.c`, `triangle.h`, and `README` files, which are available in [https://www.netlib.org/voronoi/triangle.zip](https://www.netlib.org/voronoi/triangle.zip), have been included in this repository, in `src/`.
+
+## Modifications
+
+`src/triangle.c` has been modified from the netlib distribution as listed below. Each change is marked `MODFLOW-ORG modification` in the file. `triangle.h` and `README` are unmodified. Triangle and these modifications remain under the copyright of the original author; see [LICENSE](LICENSE).
+
+- **64-bit Windows (#2):** the pointer casts use `unsigned_long`, defined as `unsigned long long` on Windows, where `unsigned long` is 32 bits and cannot hold a pointer, and as `unsigned long` elsewhere.
+- **ARM (#25):** `INEXACT` is defined as `volatile` on ARM so that the exact-arithmetic predicates are not compiled into fused multiply-add instructions.
 

@@ -34,6 +34,10 @@
 /*    customer, and you are instead telling them how they can obtain it for  */
 /*    free, then you are not required to make any arrangement with me.)      */
 /*                                                                           */
+/*  Modified in the MODFLOW-ORG/triangle repository on GitHub.  Each change  */
+/*    is marked "MODFLOW-ORG modification" in this file and is listed in     */
+/*    README.md.                                                             */
+/*                                                                           */
 /*  Hypertext instructions for Triangle are available on the Web at          */
 /*                                                                           */
 /*      http://www.cs.cmu.edu/~quake/triangle.html                           */
@@ -269,6 +273,7 @@
 /* #define CPU86 */
 /* #define LINUX */
 
+/* MODFLOW-ORG modification: volatile on ARM to prevent fused multiply-add.  */
 #if defined(__aarch64__) || defined(__arm__)
 #define INEXACT volatile
 #else
@@ -359,6 +364,8 @@
 #ifdef TRILIBRARY
 #include "triangle.h"
 #endif /* TRILIBRARY */
+/* MODFLOW-ORG modification: an integer as wide as a pointer for the pointer */
+/*   casts, since unsigned long is 32 bits on 64-bit Windows.                */
 #ifdef WINDOWS
 #define unsigned_long unsigned long long
 #else
