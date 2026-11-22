@@ -15,6 +15,8 @@ env:
   PIXI_BETA_WARNING_OFF: true
   DIST: dist-path
   PROGRAM_NAME: triangle
+  # oldest macOS the release runs on, independent of the runner image
+  MACOSX_DEPLOYMENT_TARGET: '15.0'
 jobs:
   build:
     name: ${{ matrix.os }} ${{ matrix.compiler }} ${{ matrix.version }}
@@ -109,6 +111,7 @@ jobs:
         run: |
           otool -L triangle
           lipo -info triangle
+          otool -l triangle | grep -A4 LC_BUILD_VERSION | grep -q "minos $MACOSX_DEPLOYMENT_TARGET"
 
       - name: Show build log
         if: failure()
