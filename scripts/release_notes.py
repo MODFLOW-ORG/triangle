@@ -85,9 +85,7 @@ def entry(version):
     if not "\n".join(body).strip():
         sys.exit(f"the CHANGELOG.md entry for {version} is empty")
     if any(ITEMS.glob("*.toml")):
-        print(
-            "warning: changes/ has items that are not in a release", file=sys.stderr
-        )
+        print("note: changes/ has unreleased items", file=sys.stderr)
     return "\n".join(body).strip() + "\n"
 
 
