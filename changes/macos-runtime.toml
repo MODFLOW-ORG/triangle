@@ -1,2 +1,2 @@
 section = "fixes"
-description = """The macOS executable needed Homebrew's gcc libraries to run. They are now linked into it, so it runs without Homebrew (#19)."""
+description = """The macOS executable needed Homebrew's gcc libraries to run. They are now linked into it, so it runs without Homebrew (#19, and commits 39b8948 and 18e58fc)."""

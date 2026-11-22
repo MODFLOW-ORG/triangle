@@ -17,6 +17,7 @@ ROOT = Path(__file__).resolve().parent.parent
 ITEMS = ROOT / "changes"
 CHANGELOG = ROOT / "CHANGELOG.md"
 MESON = ROOT / "meson.build"
+PIXI = ROOT / "pixi.toml"
 
 # item sections, in the order they appear in the notes
 SECTIONS = {
@@ -91,10 +92,15 @@ def entry(version):
 
 
 def project_version():
-    """Return the version in project() in meson.build."""
+    """Return the version in meson.build, or exit if pixi.toml differs."""
     match = re.search(r"\bversion\s*:\s*'([^']+)'", MESON.read_text(encoding="utf-8"))
     if match is None:
         sys.exit("meson.build has no project version")
+    pixi = tomllib.loads(PIXI.read_text(encoding="utf-8"))["workspace"]["version"]
+    if pixi != match.group(1):
+        sys.exit(
+            f"pixi.toml version {pixi} differs from {match.group(1)} in meson.build"
+        )
     return match.group(1)
 
 
