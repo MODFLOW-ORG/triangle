@@ -112,7 +112,7 @@ jobs:
           otool -L triangle
           lipo -info triangle
           for file in triangle ../lib/libtriangle.dylib; do
-            minos=$(otool -l "$file" | awk '/LC_BUILD_VERSION/ {found = 1} found && $1 == "minos" {print $2; exit}')
+            minos=$(otool -l "$file" | awk '/LC_BUILD_VERSION/ {found = 1} found && $1 == "minos" && !done {print $2; done = 1}')
             echo "$file: minimum macOS $minos"
             if [ "$minos" != "$MACOSX_DEPLOYMENT_TARGET" ]; then
               echo "$file: minimum macOS $minos differs from MACOSX_DEPLOYMENT_TARGET $MACOSX_DEPLOYMENT_TARGET"
