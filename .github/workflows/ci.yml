@@ -105,7 +105,7 @@ jobs:
           pixi run setup
           pixi run build
 
-      - name: Check architecture (macOS)
+      - name: Check architecture and minimum macOS (macOS)
         working-directory: ${{ env.PROGRAM_NAME }}/bin
         if: runner.os == 'macOS'
         run: |
