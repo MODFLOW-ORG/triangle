@@ -25,8 +25,12 @@ extern "C" {
 
 #include "triangle.h"
 
+/* the library is built with REAL as double */
+typedef char triangle_status_real_is_double[sizeof(REAL) == sizeof(double)
+                                            ? 1 : -1];
+
 /* Call triangulate(); return 0, or 1 on an error. */
-int triangulate_status(char *triswitches, struct triangulateio *in,
+int triangulate_status(const char *triswitches, struct triangulateio *in,
                        struct triangulateio *out,
                        struct triangulateio *vorout);
 

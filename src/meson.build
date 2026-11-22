@@ -9,6 +9,7 @@ exe = executable(
                  'triangle.c',
                  link_language : 'c',
                  dependencies: m_dep,
+                 build_by_default: install,
                  install: install,
                  override_options: build_options
                 )

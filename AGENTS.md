@@ -58,7 +58,8 @@ Run from the project root. Pixi is the canonical workflow and matches CI.
   `src/meson.build` keep the meshes as consistent as possible across
   compilers and platforms. Do not change them, or add a compiler, without
   comparing the `sample` test output (`test/A.1.*`) with that of an existing
-  build.
+  build. `LINUX` and `CPU86`, which make Triangle set the x87 control word,
+  are defined only on x86 hosts.
 - **Comments:** keep code comments as short as possible. A function's
   comment says what it does in one phrase, with at most one more short
   sentence; it does not narrate how or why. When a reason is needed, put it

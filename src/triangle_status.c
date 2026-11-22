@@ -23,7 +23,7 @@ static void triexitreturn(int status)
   longjmp(triexitjump, 1);
 }
 
-int triangulate_status(char *triswitches, struct triangulateio *in,
+int triangulate_status(const char *triswitches, struct triangulateio *in,
                        struct triangulateio *out,
                        struct triangulateio *vorout)
 {
@@ -39,7 +39,8 @@ int triangulate_status(char *triswitches, struct triangulateio *in,
   triexitstatus = 0;
   if (setjmp(triexitjump) == 0) {
     triexithandler = triexitreturn;
-    triangulate(triswitches, in, out, vorout);
+    /* Triangle reads the switches without changing them */
+    triangulate((char *) triswitches, in, out, vorout);
   }
   triexithandler = (void (*)(int)) 0;
 
