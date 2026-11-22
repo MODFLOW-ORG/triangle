@@ -20,7 +20,7 @@ This repository was created to facilitate automatic builds of triangle used in G
 
 ## Older macOS
 
-The macOS release requires macOS 15 or later. It should be possible to build Triangle from source on an older macOS with Meson (`pixi run setup` and `pixi run build`), since a local build targets the macOS it is built on; setting `MACOSX_DEPLOYMENT_TARGET` (for example to `14.0`) when building on a newer Mac targets an older version.
+The macOS release requires macOS 15 or later. Building on an older macOS has not been tested, but since Triangle is standard C it should work from source with Meson (`pixi run setup` and `pixi run build`), which targets the macOS it is built on. Use gcc (for example Homebrew's, with `CC=gcc-13 pixi run setup`), for which `meson.build` sets the same compiler options as the release build, so that the meshes match it. Setting `MACOSX_DEPLOYMENT_TARGET` (for example to `14.0`) when building on a newer Mac targets an older version.
 
 ## Modifications
 
