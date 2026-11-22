@@ -123,7 +123,8 @@ Run from the project root. Pixi is the canonical workflow and matches CI.
   meshes, the release archives, or the README and license) adds a TOML item
   in `changes/` (see its `README.md`). A `refactor`, `ci`, `test`, `style`,
   or `chore` pull request that changes none of these adds none. CI checks
-  the items on every run. Do not edit `CHANGELOG.md` by hand.
+  the items on every run, in its own job. Do not edit `CHANGELOG.md` by
+  hand; `release` checks that its version matches `meson.build`.
 - **Releases:** a pull request titled `chore: release <v>` sets the version
   and runs `python scripts/release_notes.py release --version <v>`, which
   moves the items into a `CHANGELOG.md` entry. After it is merged, run the
@@ -132,7 +133,11 @@ Run from the project root. Pixi is the canonical workflow and matches CI.
   yes`, named by `pixi run get-ostag`, and the source archive, and creates or
   updates release `v<version>` with the version read from `meson.build` and
   the `CHANGELOG.md` entry as its description. Scheduled and push runs build
-  the archives but do not release them.
+  the archives but do not release them. Running the workflow again for a
+  version that is already released replaces that release's files and
+  description; do it only to repair a failed release, never to ship a
+  change, which gets a new version (the 1.6 files were rebuilt in place on
+  2026-05-26, so they no longer match the 1.6 tag).
 - **CI:** `.github/workflows/ci.yml` builds and tests on Linux, macOS, and
   Windows with the compilers in its matrix, on every push, on pull requests
   to `main`, and daily at 06:00 UTC. The gcc and Intel compilers come from

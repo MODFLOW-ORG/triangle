@@ -8,6 +8,7 @@ the release workflow uses as the release description.
 
 import argparse
 import datetime
+import re
 import sys
 import tomllib
 from pathlib import Path
@@ -15,6 +16,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 ITEMS = ROOT / "changes"
 CHANGELOG = ROOT / "CHANGELOG.md"
+MESON = ROOT / "meson.build"
 
 # item sections, in the order they appear in the notes
 SECTIONS = {
@@ -31,14 +33,14 @@ def load_items():
     errors = []
     for path in sorted(ITEMS.glob("*.toml")):
         try:
-            data = tomllib.loads(path.read_text())
+            data = tomllib.loads(path.read_text(encoding="utf-8"))
         except tomllib.TOMLDecodeError as error:
             errors.append(f"{path.name}: not valid TOML: {error}")
             continue
         if set(data) != {"section", "description"}:
             errors.append(f"{path.name}: needs exactly section and description")
             continue
-        if data["section"] not in SECTIONS:
+        if not isinstance(data["section"], str) or data["section"] not in SECTIONS:
             errors.append(
                 f"{path.name}: section must be one of {', '.join(SECTIONS)}"
             )
@@ -69,7 +71,7 @@ def entry(version):
     heading = f"## {version} "
     body = []
     inside = False
-    for line in CHANGELOG.read_text().splitlines():
+    for line in CHANGELOG.read_text(encoding="utf-8").splitlines():
         if line.startswith("## "):
             if inside:
                 break
@@ -79,22 +81,45 @@ def entry(version):
             body.append(line)
     if not inside and not body:
         sys.exit(f"CHANGELOG.md has no entry for {version}")
+    if not "\n".join(body).strip():
+        sys.exit(f"the CHANGELOG.md entry for {version} is empty")
+    if any(ITEMS.glob("*.toml")):
+        print(
+            "warning: changes/ has items that are not in a release", file=sys.stderr
+        )
     return "\n".join(body).strip() + "\n"
+
+
+def project_version():
+    """Return the version in project() in meson.build."""
+    match = re.search(r"\bversion\s*:\s*'([^']+)'", MESON.read_text(encoding="utf-8"))
+    if match is None:
+        sys.exit("meson.build has no project version")
+    return match.group(1)
 
 
 def release(version, date):
     """Add the items to CHANGELOG.md as the entry for a version and remove them."""
+    if version != project_version():
+        sys.exit(
+            f"version {version} differs from {project_version()} in meson.build;"
+            " set the version first"
+        )
+    try:
+        datetime.date.fromisoformat(date)
+    except ValueError:
+        sys.exit(f"date {date} is not YYYY-MM-DD")
     items = load_items()
     if not items:
         sys.exit("there are no release note items")
-    text = CHANGELOG.read_text()
+    text = CHANGELOG.read_text(encoding="utf-8")
     if f"\n## {version} " in text:
         sys.exit(f"CHANGELOG.md already has an entry for {version}")
     # the new entry goes before the first existing one
     first = text.find("\n## ")
     head, tail = (text, "") if first < 0 else (text[: first + 1], text[first + 1 :])
     new = f"## {version} ({date})\n\n{render(items)}\n"
-    CHANGELOG.write_text(head.rstrip("\n") + "\n\n" + new + tail)
+    CHANGELOG.write_text(head.rstrip("\n") + "\n\n" + new + tail, encoding="utf-8")
     for path, _, _ in items:
         path.unlink()
 

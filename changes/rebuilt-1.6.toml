@@ -1,0 +1,2 @@
+section = "build"
+description = """The 1.6 release files were rebuilt in place on 2026-05-26, so linux.zip, macarm.zip, win64.zip, and triangle_source.zip downloaded from the 1.6 release since then already include #19, #23, and #25; its mac.zip, built on 2026-01-30, includes #19 only. From 1.6.1 on, a change is released under a new version rather than by rebuilding an existing release."""

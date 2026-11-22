@@ -1,2 +1,2 @@
 section = "build"
-description = """An executable for Intel Macs is no longer released; the macOS executable is for Apple silicon only (#23)."""
+description = """An executable for Intel Macs (mac.zip) is no longer built; the macOS executable (macarm.zip) is for Apple silicon only (#23)."""
