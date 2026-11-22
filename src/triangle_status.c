@@ -108,8 +108,11 @@ void triangle_set_unsuitable(triangle_unsuitable_test test, void *data)
   unsuitabledata = data;
 }
 
+int triunsuitable(double *triorg, double *tridest, double *triapex,
+                  double area);
+
 /* Triangle calls this for the u switch, since the library is built with
-   EXTERNAL_TEST; with no test set, no triangle is refined for it. */
+   EXTERNAL_TEST; with no test set, it refines no triangle. */
 int triunsuitable(double *triorg, double *tridest, double *triapex,
                   double area)
 {

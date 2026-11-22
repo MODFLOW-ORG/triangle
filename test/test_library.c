@@ -44,8 +44,9 @@ static double angle_at(const double *a, const double *b, const double *c)
 {
   double ux = b[0] - a[0], uy = b[1] - a[1];
   double vx = c[0] - a[0], vy = c[1] - a[1];
-  return acos((ux * vx + uy * vy) / (hypot(ux, uy) * hypot(vx, vy))) *
-         180.0 / 3.14159265358979323846;
+  /* atan2 stays defined for slivers and coincident vertices, unlike acos */
+  return atan2(fabs(ux * vy - uy * vx), ux * vx + uy * vy) * 180.0 /
+         3.14159265358979323846;
 }
 
 static double largest_angle(const double *a, const double *b, const double *c)
@@ -66,12 +67,20 @@ static double mesh_largest_angle(struct triangulateio *mesh)
   return largest;
 }
 
+static long rejections = 0;
+
 /* u switch test: refine triangles with an angle over the limit in data */
 static int angle_over_limit(const double *org, const double *dest,
                             const double *apex, double area, void *data)
 {
   (void) area;
-  return largest_angle(org, dest, apex) > *(double *) data;
+  /* stop rejecting after a bound, so a change in Triangle cannot hang */
+  if (rejections >= 100000 ||
+      largest_angle(org, dest, apex) <= *(double *) data) {
+    return 0;
+  }
+  rejections++;
+  return 1;
 }
 
 static void free_output(struct triangulateio *mesh)
@@ -213,6 +222,11 @@ int main(void)
         "refining by largest angle meets the limit");
   check(fabs(mesh_area(&out) - 58.0) < 1.0e-9,
         "refining by largest angle keeps the area");
+  free_output(&out);
+  memset(&out, 0, sizeof(out));
+  status = triangulate_status("pzQq30a0.5u", &in, &out, NULL);
+  check(status == 0 && out.numberoftriangles == plain_count,
+        "clearing the test restores the u switch without one");
   free_output(&out);
 
   /* version and copyright */

@@ -1,6 +1,10 @@
 
 build_options = cc_id == 'gcc' ? ['c_std=gnu17', 'optimization=1'] : ['optimization=1']
 
+# C17 for every compiler, since C23 reads triangle.c's triunsuitable()
+# declaration as taking no arguments
+lib_options = ['c_std=gnu17,c17', 'optimization=1']
+
 # install only when built on its own, not as a subproject
 install = not meson.is_subproject()
 
@@ -43,7 +47,7 @@ lib = library(
               link_args: export_args,
               link_depends: export_files,
               install: install,
-              override_options: build_options
+              override_options: lib_options
              )
 
 if install
