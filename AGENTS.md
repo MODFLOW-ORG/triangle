@@ -70,12 +70,14 @@ Run from the project root. Pixi is the canonical workflow and matches CI.
 - **CI:** `.github/workflows/ci.yml` builds and tests on Linux, macOS, and
   Windows with the compilers in its matrix, on every push, on pull requests
   to `main`, and daily at 06:00 UTC. The gcc and Intel compilers come from
-  `fortran-lang/setup-fortran`. On macOS the gcc runtime libraries are hidden
-  and `-static-libgcc` is set so that the released executable does not need
-  Homebrew; the `otool -L` output in the log shows what it links. Pin the
-  build runner images to a version (`ubuntu-22.04`, not `ubuntu-latest`),
-  since the image sets the oldest system the executables run on, and
-  replace an image before GitHub retires it.
+  `fortran-lang/setup-fortran`; the macOS clang job uses Apple clang from
+  the Xcode version pinned in the matrix (`setup-xcode`). On macOS the gcc
+  runtime libraries are hidden and `-static-libgcc` is set so that the
+  released executable does not need Homebrew; the `otool -L` output in the
+  log shows what it links. Pin the build runner images to a version
+  (`ubuntu-22.04`, not `ubuntu-latest`), since the image sets the oldest
+  system the executables run on, and replace an image before GitHub retires
+  it.
 - **Test integrity:** do not make a test pass by weakening it. State the
   reason for a `test()` removed from `meson.build`, a matrix entry removed
   from `ci.yml`, or a `continue-on-error`, and report such changes when
