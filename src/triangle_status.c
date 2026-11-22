@@ -12,6 +12,10 @@
 #include "triangle_status.h"
 
 extern void (*triexithandler)(int);
+void triexit(int status);
+
+static triangle_unsuitable_test unsuitabletest = (triangle_unsuitable_test) 0;
+static void *unsuitabledata = (void *) 0;
 
 static jmp_buf triexitjump;
 static int triexitstatus;
@@ -19,7 +23,8 @@ static int triexitstatus;
 /* Return from triexit() to triangulate_status() instead of exiting. */
 static void triexitreturn(int status)
 {
-  triexitstatus = status != 0 ? status : 1;
+  /* 2 is the u switch's test stopping; anything else is an error */
+  triexitstatus = status == 2 ? 2 : 1;
   longjmp(triexitjump, 1);
 }
 
@@ -97,4 +102,30 @@ const char *triangle_copyright(void)
     "free, then you are not required to make any arrangement with me.)\n"
     "\n"
     "Modified by MODFLOW-ORG; see https://github.com/MODFLOW-ORG/triangle.\n";
+}
+
+void triangle_set_unsuitable(triangle_unsuitable_test test, void *data)
+{
+  unsuitabletest = test;
+  unsuitabledata = data;
+}
+
+int triunsuitable(double *triorg, double *tridest, double *triapex,
+                  double area);
+
+/* Triangle calls this for the u switch, since the library is built with
+   EXTERNAL_TEST; with no test set, it refines no triangle. */
+int triunsuitable(double *triorg, double *tridest, double *triapex,
+                  double area)
+{
+  int result;
+
+  if (unsuitabletest == (triangle_unsuitable_test) 0) {
+    return 0;
+  }
+  result = unsuitabletest(triorg, tridest, triapex, area, unsuitabledata);
+  if (result < 0) {
+    triexit(2);
+  }
+  return result > 0;
 }

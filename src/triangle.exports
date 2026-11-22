@@ -2,6 +2,7 @@ _triangulate
 _triangulate_status
 _trifree
 _triangle_free
+_triangle_set_unsuitable
 _triangle_version
 _triangle_release_version
 _triangle_copyright
