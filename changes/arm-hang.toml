@@ -1,2 +1,0 @@
-section = "fixes"
-description = """The ARM (Apple silicon) macOS executable could hang on some inputs, so the Intel executable had to be run through Rosetta (#13). On every ARM build, the intermediate values of Triangle's exact arithmetic are now declared volatile, so the processor cannot fuse its operations; this stopped the hangs reported in #13, at some cost in speed (#25)."""
