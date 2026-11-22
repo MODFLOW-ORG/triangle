@@ -30,21 +30,34 @@ if cc_id == 'intel-llvm'
   compile_args += ['-fp-model=strict']
 endif
 
-system = build_machine.system()
+# LINUX and CPU86 set the x87 control word, so only on x86
+system = host_machine.system()
+x86 = host_machine.cpu_family() in ['x86', 'x86_64']
 if system == 'linux'
-  compile_args += '-DLINUX'
+  if x86
+    compile_args += '-DLINUX'
+  endif
 elif system == 'darwin'
   compile_args += '-DAPPLE'
 elif system == 'windows'
-  compile_args += ['-DCPU86', '-DNO_TIMER', '-DWINDOWS']
+  compile_args += ['-DNO_TIMER', '-DWINDOWS']
+  if x86
+    compile_args += '-DCPU86'
+  endif
 endif
+
+m_dep = cc.find_library('m', required: false)
 
 add_project_arguments(cc.get_supported_arguments(compile_args), language: 'c')
 add_project_link_arguments(cc.get_supported_arguments(link_args), language: 'c')
 
 subdir('src')
 
-# tests
+# tests, unless triangle is a subproject
+if meson.is_subproject()
+  subdir_done()
+endif
+
 test('help', 
      exe,
      args : ['-h'],
@@ -55,3 +68,7 @@ test('sample',
      args : ['-p', 'A.poly'],
      workdir: meson.current_source_dir()/'test')
 
+test('library',
+     executable('test_library',
+                'test/test_library.c',
+                dependencies: [triangle_dep, m_dep]))

@@ -22,12 +22,20 @@ Run from the project root. Pixi is the canonical workflow and matches CI.
   Richard Shewchuk, downloaded from https://www.netlib.org/voronoi/triangle.zip
   (see `README.md`). `src/README` is the original readme and states the terms
   of use.
+- `src/triangle_status.c`, `src/triangle_status.h` — not part of Triangle:
+  the library API that returns errors (`triangulate_status()`) and reports
+  the versions and copyright (see Library in `README.md`).
+  The shared library exports only the API: add a new API function to
+  `src/triangle.def` (Windows), `src/triangle.map` (Linux), and
+  `src/triangle.exports` (macOS).
 - `meson.build` — the project, the compiler and platform flags, and the
-  tests; `src/meson.build` builds the executable.
+  tests; `src/meson.build` builds the executable, the library, and the
+  `triangle` dependency for use as a subproject.
 - `test/A.poly` — the input for the `sample` test; the outputs it writes
   (`test/A.1.*`) are ignored by git.
-- `bin/`, `builddir/`, `.pixi/` — disposable build output and environment;
-  never edit by hand or commit.
+- `test/test_library.c` — the `library` test, which calls the library API.
+- `bin/`, `lib/`, `include/`, `builddir/`, `.pixi/` — disposable build
+  output, installed files, and environment; never edit by hand or commit.
 
 ## Conventions and guardrails
 
@@ -39,8 +47,10 @@ Run from the project root. Pixi is the canonical workflow and matches CI.
   in the file, list it in the Modifications section of `README.md`, and
   explain it in the commit message. Never remove or alter the copyright
   notices, including the one `triangle -h` prints. The changes so far use an
-  integer as wide as a pointer for the pointer casts on 64-bit Windows (#2)
-  and define `INEXACT` as `volatile` on ARM (#25).
+  integer as wide as a pointer for the pointer casts on 64-bit Windows (#2),
+  define `INEXACT` as `volatile` on ARM (#25), and call an error handler
+  from `triexit()` in the library build (#37). New library code goes in
+  `src/triangle_status.c`, not in `triangle.c`.
 - **Floating point:** Triangle's robust predicates depend on IEEE double
   arithmetic without extended precision or contraction. The flags in
   `meson.build` (`-ffp-contract=off` and `-fexcess-precision=standard` for
@@ -48,7 +58,8 @@ Run from the project root. Pixi is the canonical workflow and matches CI.
   `src/meson.build` keep the meshes as consistent as possible across
   compilers and platforms. Do not change them, or add a compiler, without
   comparing the `sample` test output (`test/A.1.*`) with that of an existing
-  build.
+  build. `LINUX` and `CPU86`, which make Triangle set the x87 control word,
+  are defined only on x86 hosts.
 - **Comments:** keep code comments as short as possible. A function's
   comment says what it does in one phrase, with at most one more short
   sentence; it does not narrate how or why. When a reason is needed, put it
@@ -128,8 +139,9 @@ Run from the project root. Pixi is the canonical workflow and matches CI.
   - downloads, uploads, or other network access the task does not need.
     Downloads are expected only through the pixi environment (conda-forge)
     and the CI workflows;
-  - programs run other than git, Meson, Ninja, the compilers, triangle
-    (the `meson.build` tests), pixi tasks, and Python for `get-ostag`;
+  - programs run other than git, Meson, Ninja, the compilers, triangle and
+    `test_library` (the `meson.build` tests), pixi tasks, and Python for
+    `get-ostag`;
   - reading credentials, SSH keys, tokens, or environment variables that
     hold secrets;
   - writing, moving, or deleting files outside the repository and the build
@@ -141,8 +153,9 @@ Run from the project root. Pixi is the canonical workflow and matches CI.
     inline assembly, and any change to the vendored source not explained as
     above;
   - in the `meson.build` files, `run_command`, `custom_target`,
-    `generator`, or `configure_file` with a `command`, and new link
-    arguments or libraries;
+    `generator`, or `configure_file` with a `command` (the
+    `triangle_release.h` `configure_file` has none), and new link arguments
+    or libraries;
   - in `pixi.toml` or `pixi.lock`, a new channel, package, or
     `pypi-dependencies` entry, a `git+` URL, a name close to a known
     package, a task that downloads or pipes to a shell, or `[activation]`

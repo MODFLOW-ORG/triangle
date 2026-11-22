@@ -1422,6 +1422,13 @@ REAL area;                                      /* The area of the triangle. */
 /**                                                                         **/
 /**                                                                         **/
 
+#ifdef TRILIBRARY
+/* MODFLOW-ORG modification: a handler that triexit() calls before exit(),   */
+/*   so that triangulate_status() can return the error to the caller.        */
+
+void (*triexithandler)(int) = (void (*)(int)) NULL;
+#endif /* TRILIBRARY */
+
 #ifdef ANSI_DECLARATORS
 void triexit(int status)
 #else /* not ANSI_DECLARATORS */
@@ -1430,6 +1437,11 @@ int status;
 #endif /* not ANSI_DECLARATORS */
 
 {
+#ifdef TRILIBRARY
+  if (triexithandler != (void (*)(int)) NULL) {
+    triexithandler(status);
+  }
+#endif /* TRILIBRARY */
   exit(status);
 }
 

@@ -1,0 +1,12 @@
+{
+  global:
+    triangulate;
+    triangulate_status;
+    trifree;
+    triangle_free;
+    triangle_version;
+    triangle_release_version;
+    triangle_copyright;
+  local:
+    *;
+};
