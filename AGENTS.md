@@ -49,16 +49,51 @@ Run from the project root. Pixi is the canonical workflow and matches CI.
   compilers and platforms. Do not change them, or add a compiler, without
   comparing the `sample` test output (`test/A.1.*`) with that of an existing
   build.
+- **Comments:** keep code comments as short as possible. A function's
+  comment says what it does in one phrase, with at most one more short
+  sentence; it does not narrate how or why. When a reason is needed, put it
+  in a short inline comment in the body. Leave out asides, cross-references,
+  and lists of cases; detail belongs in `README.md`. New files use plain
+  `/* ... */` comments; a change inside `triangle.c` follows its boxed
+  style. Keep C lines to 79 characters.
+- **Constants:** name a constant for what it holds, not for the code that
+  uses it; where it combines with another value to make a number a user
+  sees, state the product in a comment.
+- **Python:** a module docstring is a one-line purpose and one or two
+  sentences of context; a test module adds a `Cases:` list with one or two
+  lines per case, stating what each case does and its expected outcome.
+- **Documentation:** `README.md` and pull request text state what changed
+  and what it means for a user, in as few sentences as possible.
 - **Branching:** `origin` is a fork and `upstream` is `MODFLOW-ORG/triangle`.
   Cut each branch from an up-to-date `upstream/main`, and read `upstream`
   refs, not `origin` refs, for the state of the repository.
 - **Commit messages:** conventional commits (`fix:`, `feat:`, `refactor:`,
   `test:`, `docs:`, `ci:`, `chore:`), kept concise: an imperative, lowercase
-  subject and a body that contrasts the previous and new behavior.
-- **Pull requests:** there is no template. The description is one to three
-  sentences, or a few terse bullets, saying what was wrong and what changed.
-  Dependabot opens the pull requests that bump action versions
-  (`.github/dependabot.yml`).
+  subject with no trailing period, and a body that contrasts the previous
+  and new behavior. A pull request is squash merged, so its title is the
+  commit subject.
+- **Attribution:** the author of a commit, pull request, issue, or comment
+  is its human author. Do not add a `Co-Authored-By` trailer, a "Generated
+  with" footer, or other tool attribution.
+- **Issues:** every change has an issue. Lead with the problem, where it
+  is, and how it shows up; put logs and links below. Correct an issue with a
+  follow-up comment rather than a silent edit.
+- **Pull requests:** one issue per pull request. There is no template. The
+  description is one to three sentences, or a few terse bullets, saying what
+  was wrong and what changed, and closes the issue (`Closes #n`). Put what a
+  reviewer needs beyond that (edge cases, numbers, what is left out) in a
+  comment headed `## Reviewer Summary`. Before each commit to an open pull
+  request, check whether it makes the description or the Reviewer Summary
+  untrue or incomplete, and edit them to match. Dependabot opens the pull
+  requests that bump action versions (`.github/dependabot.yml`).
+- **Pull request review:** after the first green CI run, have an agent on a
+  smaller model review the diff, given the pull request's intent and the
+  files but not the author's conclusions, and post its findings as a
+  `## Review` comment. Verify each finding before acting: fix the ones that
+  hold and answer the rest with the reason in a `## Response` comment.
+  Repeat until a review has no actionable findings, at most three rounds for
+  code changes; a pull request that changes only documentation gets one
+  round. Findings still in dispute are left for the maintainer to decide.
 - **Version:** the version is set in both `meson.build` and `pixi.toml`;
   change them together.
 - **Releases:** run the `triangle checks` workflow on `main` by hand
