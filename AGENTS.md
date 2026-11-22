@@ -100,13 +100,17 @@ Run from the project root. Pixi is the canonical workflow and matches CI.
 - **Pull request review:** after the first green CI run, have an agent on a
   smaller model review the diff, given the pull request's intent and the
   files but not the author's conclusions. Do not post its findings. Verify
-  each finding before acting, fix the ones that hold, and push the fixes in
-  one commit whose message lists every finding as fixed or declined, with
-  the reason. Repeat until a review has no actionable findings, at most
-  three rounds for code changes and one for a pull request that changes only
-  documentation. Post a pull request comment only for findings still
-  disputed after the last round, which are left for the maintainer to
-  decide.
+  each finding before acting and fix the ones that hold. Push the fixes in
+  one commit whose body lists every finding of the round, one line each:
+  `fixed: <finding>` or `declined: <finding> (<reason>)`; a round with no
+  fixes is recorded the same way in an empty commit
+  (`git commit --allow-empty`). Repeat until a review has no actionable
+  findings, at most three rounds for code changes and one for a pull
+  request that changes only documentation. The squash merge keeps every
+  commit message in the merged commit's body, so the record reaches the
+  default branch; keep that setting. Post a pull request comment only for a
+  finding the author can neither fix nor show to be wrong, which is left
+  for the maintainer to decide.
 - **Version:** the version is set in both `meson.build` and `pixi.toml`;
   change them together.
 - **Releases:** run the `triangle checks` workflow on `main` by hand
