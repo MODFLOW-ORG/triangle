@@ -67,20 +67,18 @@ static double mesh_largest_angle(struct triangulateio *mesh)
   return largest;
 }
 
-static long rejections = 0;
+static long calls = 0;
 
-/* u switch test: refine triangles with an angle over the limit in data */
+/* u switch test: refine triangles with an angle over the limit in data, and
+   stop after a number of calls, since refinement may not finish */
 static int angle_over_limit(const double *org, const double *dest,
                             const double *apex, double area, void *data)
 {
   (void) area;
-  /* stop rejecting after a bound, so a change in Triangle cannot hang */
-  if (rejections >= 100000 ||
-      largest_angle(org, dest, apex) <= *(double *) data) {
-    return 0;
+  if (++calls > 200000) {
+    return -1;
   }
-  rejections++;
-  return 1;
+  return largest_angle(org, dest, apex) > *(double *) data;
 }
 
 static void free_output(struct triangulateio *mesh)
@@ -227,6 +225,20 @@ int main(void)
   status = triangulate_status("pzQq30a0.5u", &in, &out, NULL);
   check(status == 0 && out.numberoftriangles == plain_count,
         "clearing the test restores the u switch without one");
+  free_output(&out);
+
+  /* a 90 degree limit does not finish, so the test stops it */
+  angle_limit = 90.0;
+  calls = 0;
+  triangle_set_unsuitable(angle_over_limit, &angle_limit);
+  memset(&out, 0, sizeof(out));
+  status = triangulate_status("pzQq30a0.5u", &in, &out, NULL);
+  triangle_set_unsuitable(NULL, NULL);
+  check(status == 2, "a test that stops triangulating returns status 2");
+  memset(&out, 0, sizeof(out));
+  status = triangulate_status("pzQq30a0.5", &in, &out, NULL);
+  check(status == 0 && out.numberoftriangles == plain_count,
+        "triangulate again after a test stops");
   free_output(&out);
 
   /* version and copyright */

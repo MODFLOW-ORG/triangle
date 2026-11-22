@@ -12,6 +12,7 @@
 #include "triangle_status.h"
 
 extern void (*triexithandler)(int);
+void triexit(int status);
 
 static triangle_unsuitable_test unsuitabletest = (triangle_unsuitable_test) 0;
 static void *unsuitabledata = (void *) 0;
@@ -22,7 +23,8 @@ static int triexitstatus;
 /* Return from triexit() to triangulate_status() instead of exiting. */
 static void triexitreturn(int status)
 {
-  triexitstatus = status != 0 ? status : 1;
+  /* 2 is the u switch's test stopping; anything else is an error */
+  triexitstatus = status == 2 ? 2 : 1;
   longjmp(triexitjump, 1);
 }
 
@@ -116,8 +118,14 @@ int triunsuitable(double *triorg, double *tridest, double *triapex,
 int triunsuitable(double *triorg, double *tridest, double *triapex,
                   double area)
 {
+  int result;
+
   if (unsuitabletest == (triangle_unsuitable_test) 0) {
     return 0;
   }
-  return unsuitabletest(triorg, tridest, triapex, area, unsuitabledata);
+  result = unsuitabletest(triorg, tridest, triapex, area, unsuitabledata);
+  if (result < 0) {
+    triexit(2);
+  }
+  return result > 0;
 }

@@ -25,8 +25,10 @@ Run from the project root. Pixi is the canonical workflow and matches CI.
   (see `README.md`). `src/README` is the original readme and states the terms
   of use.
 - `src/triangle_status.c`, `src/triangle_status.h` — not part of Triangle:
-  the library API that returns errors (`triangulate_status()`) and reports
-  the versions and copyright (see Library in `README.md`).
+  the library API that returns errors (`triangulate_status()`), takes the
+  `u` switch's test (`triangle_set_unsuitable()`, with the library built
+  with `EXTERNAL_TEST`), and reports the versions and copyright (see Library
+  in `README.md`).
   The shared library exports only the API: add a new API function to
   `src/triangle.def` (Windows), `src/triangle.map` (Linux), and
   `src/triangle.exports` (macOS).

@@ -29,13 +29,14 @@ extern "C" {
 typedef char triangle_status_real_is_double[sizeof(REAL) == sizeof(double)
                                             ? 1 : -1];
 
-/* Call triangulate(); return 0, or 1 on an error. */
+/* Call triangulate(); return 0, 1 on an error, or 2 if the u switch's test
+   stopped it. */
 int triangulate_status(const char *triswitches, struct triangulateio *in,
                        struct triangulateio *out,
                        struct triangulateio *vorout);
 
-/* Test for the u switch: return nonzero if the triangle with these corners
-   and area should be refined. */
+/* Test for the u switch: return positive to refine the triangle with these
+   corners and area, 0 to accept it, or negative to stop triangulating. */
 typedef int (*triangle_unsuitable_test)(const double *org, const double *dest,
                                         const double *apex, double area,
                                         void *data);
