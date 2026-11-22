@@ -55,3 +55,7 @@ test('sample',
      args : ['-p', 'A.poly'],
      workdir: meson.current_source_dir()/'test')
 
+test('library',
+     executable('test_library',
+                'test/test_library.c',
+                dependencies: [triangle_dep, cc.find_library('m', required: false)]))

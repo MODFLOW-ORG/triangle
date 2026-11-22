@@ -1,0 +1,7 @@
+EXPORTS
+  triangulate
+  triangulate_status
+  trifree
+  triangle_version
+  triangle_release_version
+  triangle_copyright
