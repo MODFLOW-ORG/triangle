@@ -15,6 +15,8 @@ Run from the project root. Pixi is the canonical workflow and matches CI.
   `pixi run build` first
 - **Remove the build directory:** `pixi run clean`
 - **Show the OS tag used for release archives:** `pixi run get-ostag`
+- **Check the release note items:** `pixi run check-release-notes`; show
+  them as they will appear: `pixi run release-notes`
 
 ## Repository orientation
 
@@ -31,6 +33,9 @@ Run from the project root. Pixi is the canonical workflow and matches CI.
 - `meson.build` — the project, the compiler and platform flags, and the
   tests; `src/meson.build` builds the executable, the library, and the
   `triangle` dependency for use as a subproject.
+- `changes/` — the release note items (see its `README.md`);
+  `CHANGELOG.md` — the notes of each release since 1.6.1;
+  `scripts/release_notes.py` checks the items and writes the notes.
 - `test/A.poly` — the input for the `sample` test; the outputs it writes
   (`test/A.1.*`) are ignored by git.
 - `test/test_library.c` — the `library` test, which calls the library API.
@@ -113,12 +118,26 @@ Run from the project root. Pixi is the canonical workflow and matches CI.
   for the maintainer to decide.
 - **Version:** the version is set in both `meson.build` and `pixi.toml`;
   change them together.
-- **Releases:** run the `triangle checks` workflow on `main` by hand
-  (`workflow_dispatch`). Its release job collects the archives of the matrix
-  entries with `release: yes`, named by `pixi run get-ostag`, and the source
-  archive, and creates or updates release `v<version>` with the version read
-  from `meson.build`. Scheduled and push runs build the archives but do not
-  release them.
+- **Release notes:** a pull request that changes what a user runs, gets
+  back, reads, or compiles (the executable, the library and its API, the
+  meshes, the release archives, or the README and license) adds a TOML item
+  in `changes/` (see its `README.md`). A `refactor`, `ci`, `test`, `style`,
+  or `chore` pull request that changes none of these adds none. CI checks
+  the items on every run, in its own job. Do not edit `CHANGELOG.md` by
+  hand; `release` checks that its version matches `meson.build`.
+- **Releases:** a pull request titled `chore: release <v>` sets the version
+  and runs `python scripts/release_notes.py release --version <v>`, which
+  moves the items into a `CHANGELOG.md` entry. After it is merged, run the
+  `triangle checks` workflow on `main` by hand (`workflow_dispatch`). Its
+  release job collects the archives of the matrix entries with `release:
+  yes`, named by `pixi run get-ostag`, and the source archive, and creates or
+  updates release `v<version>` with the version read from `meson.build` and
+  the `CHANGELOG.md` entry as its description. Scheduled and push runs build
+  the archives but do not release them. Running the workflow again for a
+  version that is already released replaces that release's files and
+  description; do it only to repair a failed release, never to ship a
+  change, which gets a new version (the 1.6 files were rebuilt in place on
+  2026-05-26, so they no longer match the 1.6 tag).
 - **CI:** `.github/workflows/ci.yml` builds and tests on Linux, macOS, and
   Windows with the compilers in its matrix, on every push, on pull requests
   to `main`, and daily at 06:00 UTC. The gcc and Intel compilers come from
@@ -147,7 +166,7 @@ Run from the project root. Pixi is the canonical workflow and matches CI.
     and the CI workflows;
   - programs run other than git, Meson, Ninja, the compilers, triangle and
     `test_library` (the `meson.build` tests), pixi tasks, and Python for
-    `get-ostag`;
+    `get-ostag` and `scripts/release_notes.py`;
   - reading credentials, SSH keys, tokens, or environment variables that
     hold secrets;
   - writing, moving, or deleting files outside the repository and the build

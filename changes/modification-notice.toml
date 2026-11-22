@@ -1,0 +1,2 @@
+section = "documentation"
+description = """Each change to Triangle's source is marked in triangle.c and listed in README.md, LICENSE holds Triangle's full terms of use, and the source archive includes LICENSE and README.md (#36)."""
