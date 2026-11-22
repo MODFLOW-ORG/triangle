@@ -33,11 +33,14 @@ Run from the project root. Pixi is the canonical workflow and matches CI.
 
 - **Vendored source:** keep `src/triangle.c` and `src/triangle.h` as
   distributed. A change is made only to build or run correctly on a
-  supported platform, is as small as possible, is guarded by the
-  preprocessor where it applies to one platform, and is explained in the
-  commit message. The one change so far defines `INEXACT` as `volatile` on
-  ARM (#25), where the exact-arithmetic predicates otherwise failed,
-  likely because gcc fused their operations into multiply-add instructions.
+  supported platform, is as small as possible, and is guarded by the
+  preprocessor where it applies to one platform. The license requires clear
+  notice of each change: mark it with a `MODFLOW-ORG modification` comment
+  in the file, list it in the Modifications section of `README.md`, and
+  explain it in the commit message. Never remove or alter the copyright
+  notices, including the one `triangle -h` prints. The changes so far use an
+  integer as wide as a pointer for the pointer casts on 64-bit Windows (#2)
+  and define `INEXACT` as `volatile` on ARM (#25).
 - **Floating point:** Triangle's robust predicates depend on IEEE double
   arithmetic without extended precision or contraction. The flags in
   `meson.build` (`-ffp-contract=off` and `-fexcess-precision=standard` for
