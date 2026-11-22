@@ -1,2 +1,2 @@
 section = "build"
-description = """The macOS executable and library require macOS 15 or later; the 1.6 macarm.zip ran on macOS 14 (#35). The minimum is now set explicitly rather than by the build machine's macOS version, so a newer build machine does not raise it, and CI checks it (#48)."""
+description = """The macOS executable and library require macOS 15 or later; the 1.6 macarm.zip ran on macOS 14 (#35). The minimum is now set explicitly rather than by the build machine's macOS version, so a newer build machine does not raise it, and CI checks it (#48). It should be possible to build Triangle from source on an older macOS with Meson (pixi run setup and pixi run build), since a local build targets the macOS it is built on."""

@@ -18,6 +18,10 @@ Downloaded from https://www.netlib.org/voronoi/triangle.zip on July 5, 2023.
 
 This repository was created to facilitate automatic builds of triangle used in GitHub Actions CI workflows. Only the `triangle.c`, `triangle.h`, and `README` files, which are available in [https://www.netlib.org/voronoi/triangle.zip](https://www.netlib.org/voronoi/triangle.zip), have been included in this repository, in `src/`.
 
+## Older macOS
+
+The macOS release requires macOS 15 or later. It should be possible to build Triangle from source on an older macOS with Meson (`pixi run setup` and `pixi run build`), since a local build targets the macOS it is built on; setting `MACOSX_DEPLOYMENT_TARGET` (for example to `14.0`) when building on a newer Mac targets an older version.
+
 ## Modifications
 
 `src/triangle.c` has been modified from the netlib distribution as listed below. Each change is marked `MODFLOW-ORG modification` in the file. `triangle.h` and `README` are unmodified. Triangle and these modifications remain under the copyright of the original author; see [LICENSE](LICENSE).
