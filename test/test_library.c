@@ -68,13 +68,19 @@ static double mesh_largest_angle(struct triangulateio *mesh)
 }
 
 static long calls = 0;
+static int area_mismatch = 0;
 
 /* u switch test: refine triangles with an angle over the limit in data, and
    stop after a number of calls, since refinement may not finish */
 static int angle_over_limit(const double *org, const double *dest,
                             const double *apex, double area, void *data)
 {
-  (void) area;
+  /* Triangle passes the triangle's area */
+  if (fabs(fabs((dest[0] - org[0]) * (apex[1] - org[1]) -
+                (apex[0] - org[0]) * (dest[1] - org[1])) / 2.0 - area) >
+      1.0e-9 * (1.0 + area)) {
+    area_mismatch = 1;
+  }
   if (++calls > 200000) {
     return -1;
   }
@@ -220,6 +226,7 @@ int main(void)
         "refining by largest angle meets the limit");
   check(fabs(mesh_area(&out) - 58.0) < 1.0e-9,
         "refining by largest angle keeps the area");
+  check(!area_mismatch, "the test receives each triangle's area");
   free_output(&out);
   memset(&out, 0, sizeof(out));
   status = triangulate_status("pzQq30a0.5u", &in, &out, NULL);

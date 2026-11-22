@@ -36,7 +36,9 @@ int triangulate_status(const char *triswitches, struct triangulateio *in,
                        struct triangulateio *vorout);
 
 /* Test for the u switch: return positive to refine the triangle with these
-   corners and area, 0 to accept it, or negative to stop triangulating. */
+   corners (x, y, then attributes; valid only during the call) and area, 0 to
+   accept it, or negative to stop triangulating. It must not call Triangle or
+   throw. */
 typedef int (*triangle_unsuitable_test)(const double *org, const double *dest,
                                         const double *apex, double area,
                                         void *data);
