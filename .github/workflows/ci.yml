@@ -79,7 +79,7 @@ jobs:
         working-directory: ${{ env.PROGRAM_NAME }}
         id: ostag
         run: |
-          echo "ostag=$(pixi run get-ostag)" >> $GITHUB_ENV
+          echo "ostag=$(pixi run -e ${{ matrix.environment }} get-ostag)" >> $GITHUB_ENV
 
       # static link libgcc
       - name: Set LDFLAGS (macOS gcc)
