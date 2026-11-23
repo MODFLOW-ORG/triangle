@@ -150,10 +150,12 @@ jobs:
         working-directory: ${{ env.PROGRAM_NAME }}
         run: |
           # the executable and the library in bin/, as get-modflow expects
-          mkdir -p dist/bin
-          cp bin/triangle lib/libtriangle.* dist/bin/
-          cp -R include dist/
-          (cd dist && zip -r ../${ostag}.zip bin include)
+          if [ "$RUNNER_OS" = macOS ]; then libext=dylib; else libext=so; fi
+          stage="$RUNNER_TEMP/archive"
+          mkdir -p "$stage/bin"
+          cp bin/triangle "lib/libtriangle.$libext" "$stage/bin/"
+          cp -R include "$stage/"
+          (cd "$stage" && zip -r "$OLDPWD/${ostag}.zip" bin include)
           unzip -l ${ostag}.zip
 
       - name: Create zip file on Windows
