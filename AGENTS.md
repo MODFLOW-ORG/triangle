@@ -136,10 +136,11 @@ Run from the project root. Pixi is the canonical workflow and matches CI.
   moves the items into a `CHANGELOG.md` entry. After it is merged, run the
   `triangle checks` workflow on `main` by hand (`workflow_dispatch`). Its
   release job collects the archives of the matrix entries with `release:
-  yes`, named by `pixi run get-ostag`, each holding the executable at the
-  top level with the library in `lib/` (the Windows DLL beside the
-  executable) and the headers in `include/`, and the source archive, and
-  creates or updates release `v<version>` with the version read from
+  yes`, named by `pixi run get-ostag`, and the source archive. Each
+  platform archive holds the executable and the shared library (the DLL on
+  Windows) in `bin/`, where flopy's `get-modflow` installs from, the
+  headers in `include/`, and on Windows the import library in `lib/`. The
+  job creates or updates release `v<version>` with the version read from
   `meson.build` and the `CHANGELOG.md` entry as its description. Scheduled
   and push runs build the archives but do not release them. Running the
   workflow again for a version that is already released replaces that

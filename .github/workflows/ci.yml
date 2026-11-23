@@ -149,8 +149,13 @@ jobs:
         if: ${{ matrix.release == 'yes' && runner.os != 'Windows' }}
         working-directory: ${{ env.PROGRAM_NAME }}
         run: |
-          (cd bin && zip -r ../${ostag}.zip .)
-          zip -r ${ostag}.zip lib include
+          # the executable and the library in bin/, as get-modflow expects
+          if [ "$RUNNER_OS" = macOS ]; then libext=dylib; else libext=so; fi
+          stage="$RUNNER_TEMP/archive"
+          mkdir -p "$stage/bin"
+          cp bin/triangle "lib/libtriangle.$libext" "$stage/bin/"
+          cp -R include "$stage/"
+          (cd "$stage" && zip -r "$OLDPWD/${ostag}.zip" bin include)
           unzip -l ${ostag}.zip
 
       - name: Create zip file on Windows
@@ -158,8 +163,7 @@ jobs:
         working-directory: ${{ env.PROGRAM_NAME }}
         run: |
           $ZipFileName = "$env:ostag.zip"
-          Compress-Archive -Path "bin\*" -DestinationPath $ZipFileName
-          Compress-Archive -Path "lib", "include" -Update -DestinationPath $ZipFileName
+          Compress-Archive -Path "bin", "lib", "include" -DestinationPath $ZipFileName
           ls *.zip
 
       - name: Upload distribution archive
