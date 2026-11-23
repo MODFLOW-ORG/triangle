@@ -1,2 +1,0 @@
-section = "build"
-description = "The macOS release is built with gcc 15 from conda-forge instead of gcc 13 from Homebrew (#51). It still links only the system library, and the meshes are unchanged. To build with the same gcc, run `pixi run -e gcc setup` and `pixi run -e gcc build`."
