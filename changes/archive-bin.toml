@@ -1,2 +1,0 @@
-section = "build"
-description = "Each release archive holds the executable and the library in bin/, with the headers in include/ and, on Windows, the import library in lib/ (#55). flopy's get-modflow (get-modflow --repo triangle) installs only what is in bin/, so it now installs the library beside the executable instead of in a lib/ folder inside the bindir."

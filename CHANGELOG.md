@@ -3,6 +3,12 @@
 Changes in each release of MODFLOW-ORG/triangle, from the release note items in
 `changes/`. Releases before 1.6.1 are listed on the GitHub releases page.
 
+## 1.6.2 (2026-11-23)
+
+### Build and distribution
+
+- Each release archive holds the executable and the library in bin/, with the headers in include/ and, on Windows, the import library in lib/ (#55). flopy's get-modflow (get-modflow --repo triangle) installs only what is in bin/, so it now installs the library beside the executable instead of in a lib/ folder inside the bindir.
+
 ## 1.6.1 (2026-11-23)
 
 ### New features
