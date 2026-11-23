@@ -151,8 +151,9 @@ Run from the project root. Pixi is the canonical workflow and matches CI.
   Windows with the compilers in its matrix, on every push, on pull requests
   to `main`, and daily at 06:00 UTC. The gcc jobs use gcc from conda-forge
   in the `gcc` pixi environment (`pixi run -e gcc ...`); the Intel compilers
-  come from `fortran-lang/setup-fortran`; the macOS clang job uses Apple
-  clang from the Xcode version pinned in the matrix (`setup-xcode`). On
+  come from `fortran-lang/setup-fortran`, which sets `CC=cl` on Windows, so
+  the Windows Intel job sets `CC=icx` after it; the macOS clang job uses
+  Apple clang from the Xcode version pinned in the matrix (`setup-xcode`). On
   macOS `-static-libgcc` is set, and the job prints what the executable and
   the library link (`otool -L`) and fails if they link `libgcc_s`. Pin the
   build runner images to a version (`ubuntu-22.04`, not `ubuntu-latest`),
