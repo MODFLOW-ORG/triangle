@@ -1,2 +1,0 @@
-section = "features"
-description = """A program using the library can decide which triangles Triangle refines with the u switch, by setting a test with triangle_set_unsuitable(), for example to refine triangles with an angle over a limit (#44). The test can also stop the run, and triangulate_status() then returns 2, since refinement toward some limits, such as 90 degrees, never finishes. The executable's u switch is unchanged."""

@@ -1,2 +1,0 @@
-section = "build"
-description = """gcc and the Intel compilers are given options that turn off extended precision and fused multiply-add, and Triangle is optimized at level 1 with every compiler, so that the meshes are as consistent as possible across platforms and compilers; a mesh, or the run time, may differ slightly from an executable built before (#23)."""
