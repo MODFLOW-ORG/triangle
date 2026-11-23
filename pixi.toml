@@ -11,6 +11,16 @@ meson = ">=1.3.1"
 ninja = "*"
 modflow-devtools = "*"
 
+# gcc from conda-forge, used by the gcc jobs in CI (pixi run -e gcc ...)
+[feature.gcc.dependencies]
+gcc = "15.*"
+
+[feature.gcc.activation.env]
+CC = "gcc"
+
+[environments]
+gcc = ["gcc"]
+
 [tasks]
 
 # meson build for triangle
