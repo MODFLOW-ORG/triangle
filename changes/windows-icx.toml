@@ -1,0 +1,2 @@
+section = "build"
+description = "The Windows executable and library (win64.zip) are built with the Intel compiler (icx), with strict floating point; earlier releases were built with Microsoft's compiler (MSVC) (#59). The meshes are the same, apart from rounding in the last digits of attribute values Triangle interpolates at new vertices."

@@ -63,12 +63,12 @@ Run from the project root. Pixi is the canonical workflow and matches CI.
 - **Floating point:** Triangle's robust predicates depend on IEEE double
   arithmetic without extended precision or contraction. The flags in
   `meson.build` (`-ffp-contract=off` and `-fexcess-precision=standard` for
-  gcc, `-fp-model=strict` for Intel) and `optimization=1` in
-  `src/meson.build` keep the meshes as consistent as possible across
-  compilers and platforms. Do not change them, or add a compiler, without
-  comparing the `sample` test output (`test/A.1.*`) with that of an existing
-  build. `LINUX` and `CPU86`, which make Triangle set the x87 control word,
-  are defined only on x86 hosts.
+  gcc, `-fp-model=strict` for Intel, `/fp:strict` for Intel on Windows) and
+  `optimization=1` in `src/meson.build` keep the meshes as consistent as
+  possible across compilers and platforms. Do not change them, or add a
+  compiler, without comparing the `sample` test output (`test/A.1.*`) with
+  that of an existing build. `LINUX` and `CPU86`, which make Triangle set
+  the x87 control word, are defined only on x86 hosts.
 - **Comments:** keep code comments as short as possible. A function's
   comment says what it does in one phrase, with at most one more short
   sentence; it does not narrate how or why. When a reason is needed, put it
@@ -151,8 +151,9 @@ Run from the project root. Pixi is the canonical workflow and matches CI.
   Windows with the compilers in its matrix, on every push, on pull requests
   to `main`, and daily at 06:00 UTC. The gcc jobs use gcc from conda-forge
   in the `gcc` pixi environment (`pixi run -e gcc ...`); the Intel compilers
-  come from `fortran-lang/setup-fortran`; the macOS clang job uses Apple
-  clang from the Xcode version pinned in the matrix (`setup-xcode`). On
+  come from `fortran-lang/setup-fortran`, which sets `CC=cl` on Windows, so
+  the Windows Intel job sets `CC=icx` after it; the macOS clang job uses
+  Apple clang from the Xcode version pinned in the matrix (`setup-xcode`). On
   macOS `-static-libgcc` is set, and the job prints what the executable and
   the library link (`otool -L`) and fails if they link `libgcc_s`. Pin the
   build runner images to a version (`ubuntu-22.04`, not `ubuntu-latest`),

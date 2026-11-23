@@ -30,6 +30,11 @@ if cc_id == 'intel-llvm'
   compile_args += ['-fp-model=strict']
 endif
 
+# icx on Windows takes the cl-style option
+if cc_id == 'intel-llvm-cl'
+  compile_args += ['/fp:strict']
+endif
+
 # LINUX and CPU86 set the x87 control word, so only on x86
 system = host_machine.system()
 x86 = host_machine.cpu_family() in ['x86', 'x86_64']
