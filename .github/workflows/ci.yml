@@ -60,6 +60,11 @@ jobs:
         if: matrix.compiler == 'clang'
         run: echo "CC=clang" >> $GITHUB_ENV
 
+      # setup-fortran sets CC=cl on Windows, which builds with MSVC
+      - name: Set CC (Windows intel)
+        if: ${{ runner.os == 'Windows' && matrix.compiler == 'intel' }}
+        run: echo "CC=icx" >> $env:GITHUB_ENV
+
       - name: Setup pixi
         uses: prefix-dev/setup-pixi@v0.11.3
         with:
