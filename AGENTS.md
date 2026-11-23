@@ -9,7 +9,8 @@ repeating them; follow those instead of re-deriving a command.
 
 Run from the project root. Pixi is the canonical workflow and matches CI.
 
-- **Configure the build directory:** `pixi run setup`
+- **Configure the build directory:** `pixi run setup`; with the gcc that
+  CI uses: `pixi run -e gcc setup` (and `-e gcc` for the commands below)
 - **Build** (installs the executable to `bin/`, the library to `lib/`, and
   the headers to `include/`): `pixi run build`
 - **Run the tests:** `pixi run test`; it does not rebuild, so run
@@ -147,19 +148,20 @@ Run from the project root. Pixi is the canonical workflow and matches CI.
   rebuilt in place on 2026-05-26, so they no longer match the 1.6 tag).
 - **CI:** `.github/workflows/ci.yml` builds and tests on Linux, macOS, and
   Windows with the compilers in its matrix, on every push, on pull requests
-  to `main`, and daily at 06:00 UTC. The gcc and Intel compilers come from
-  `fortran-lang/setup-fortran`; the macOS clang job uses Apple clang from
-  the Xcode version pinned in the matrix (`setup-xcode`). On macOS the gcc
-  runtime libraries are hidden and `-static-libgcc` is set so that the
-  released executable does not need Homebrew; the `otool -L` output in the
-  log shows what it links. Pin the build runner images to a version
-  (`ubuntu-22.04`, not `ubuntu-latest`), since the image sets the oldest
-  system the executables run on, and replace an image before GitHub retires
-  it. On macOS, `MACOSX_DEPLOYMENT_TARGET` in `ci.yml` sets the oldest
-  version instead (15.0), and the macOS job checks the `minos` of the
-  executable and the library against it; changing the runner image does
-  not change it. Raise it only on purpose, when Apple stops supporting that
-  version, with a release note item.
+  to `main`, and daily at 06:00 UTC. The gcc jobs use gcc from conda-forge
+  in the `gcc` pixi environment (`pixi run -e gcc ...`); the Intel compilers
+  come from `fortran-lang/setup-fortran`; the macOS clang job uses Apple
+  clang from the Xcode version pinned in the matrix (`setup-xcode`). On
+  macOS `-static-libgcc` is set, and the job prints what the executable and
+  the library link (`otool -L`) and fails if they link `libgcc_s`. Pin the
+  build runner images to a version (`ubuntu-22.04`, not `ubuntu-latest`),
+  since the image sets the oldest system the executables run on, and
+  replace an image before GitHub retires it. On macOS,
+  `MACOSX_DEPLOYMENT_TARGET` in `ci.yml` sets the oldest version instead
+  (15.0), and the macOS job checks the `minos` of the executable and the
+  library against it; changing the runner image does not change it.
+  Raise it only on purpose, when Apple stops supporting that version, with
+  a release note item.
 - **Test integrity:** do not make a test pass by weakening it. State the
   reason for a `test()` removed from `meson.build`, a matrix entry removed
   from `ci.yml`, or a `continue-on-error`, and report such changes when
