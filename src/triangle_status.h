@@ -47,7 +47,8 @@ typedef int (*triangle_unsuitable_test)(const double *org, const double *dest,
 void triangle_set_unsuitable(triangle_unsuitable_test test, void *data);
 
 /* Text Triangle printed during the last call to triangulate_status(), such
-   as the reason for an error; at most the last 4095 characters. */
+   as the reason for an error; at most the last 4095 characters, valid until
+   the next call. */
 const char *triangle_messages(void);
 
 /* Set whether Triangle's messages are printed to standard output (nonzero,

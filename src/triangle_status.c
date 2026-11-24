@@ -39,14 +39,16 @@ int triangle_printf(const char *format, ...)
   va_list args;
   int count;
 
+  if (printmessages) {
+    va_start(args, format);
+    vprintf(format, args);
+    va_end(args);
+  }
   va_start(args, format);
   count = vsnprintf(text, sizeof(text), format, args);
   va_end(args);
   if (count < 0) {
     return count;
-  }
-  if (printmessages) {
-    fputs(text, stdout);
   }
   length = strlen(text);
   /* drop whole lines from the start to make room */
