@@ -364,6 +364,14 @@
 #ifdef TRILIBRARY
 #include "triangle.h"
 #endif /* TRILIBRARY */
+
+#ifdef TRILIBRARY
+/* MODFLOW-ORG modification: in the library build, messages go to            */
+/*   triangle_printf(), which keeps them for the caller.                     */
+
+int triangle_printf(const char *format, ...);
+#define printf triangle_printf
+#endif /* TRILIBRARY */
 /* MODFLOW-ORG modification: an integer as wide as a pointer for the pointer */
 /*   casts, since unsigned long is 32 bits on 64-bit Windows.                */
 #ifdef WINDOWS

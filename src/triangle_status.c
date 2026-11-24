@@ -1,6 +1,9 @@
 /* Triangle library API that returns errors; not part of Triangle. */
 
 #include <setjmp.h>
+#include <stdarg.h>
+#include <stdio.h>
+#include <string.h>
 #ifdef CPU86
 #include <float.h>
 #endif
@@ -19,6 +22,48 @@ static void *unsuitabledata = (void *) 0;
 
 static jmp_buf triexitjump;
 static int triexitstatus;
+
+/* the end of the messages of the last call, with room for the null */
+#define MESSAGES_SIZE 4096
+static char messages[MESSAGES_SIZE];
+static size_t messageslength = 0;
+static int printmessages = 1;
+
+/* Print a message, if printing is on, and keep it. */
+int triangle_printf(const char *format, ...)
+{
+  char text[MESSAGES_SIZE];
+  size_t length;
+  size_t drop;
+  char *cut;
+  va_list args;
+  int count;
+
+  if (printmessages) {
+    va_start(args, format);
+    vprintf(format, args);
+    va_end(args);
+  }
+  va_start(args, format);
+  count = vsnprintf(text, sizeof(text), format, args);
+  va_end(args);
+  if (count < 0) {
+    return count;
+  }
+  length = strlen(text);
+  /* drop whole lines from the start to make room */
+  if (messageslength + length > MESSAGES_SIZE - 1) {
+    drop = messageslength + length - (MESSAGES_SIZE - 1);
+    cut = memchr(messages + drop - 1, '\n', messageslength - drop + 1);
+    drop = cut == NULL ? messageslength : (size_t) (cut - messages) + 1;
+    memmove(messages, messages + drop, messageslength - drop);
+    messageslength -= drop;
+  }
+  memcpy(messages + messageslength, text, length);
+  messageslength += length;
+  messages[messageslength] = '\0';
+  return count;
+}
 
 /* Return from triexit() to triangulate_status() instead of exiting. */
 static void triexitreturn(int status)
@@ -42,6 +87,8 @@ int triangulate_status(const char *triswitches, struct triangulateio *in,
 #endif
 
   triexitstatus = 0;
+  messageslength = 0;
+  messages[0] = '\0';
   if (setjmp(triexitjump) == 0) {
     triexithandler = triexitreturn;
     /* Triangle reads the switches without changing them */
@@ -56,6 +103,16 @@ int triangulate_status(const char *triswitches, struct triangulateio *in,
   _FPU_SETCW(control);
 #endif
   return triexitstatus;
+}
+
+const char *triangle_messages(void)
+{
+  return messages;
+}
+
+void triangle_set_print(int print)
+{
+  printmessages = print;
 }
 
 void triangle_free(void *memptr)

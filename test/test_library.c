@@ -167,15 +167,22 @@ int main(void)
   bad.pointlist = square;
   status = triangulate_status("zQ", &bad, &out, NULL);
   check(status != 0, "two vertices return an error status");
+  check(strstr(triangle_messages(), "at least three input vertices") != NULL,
+        "the messages give the reason for the error");
+  triangle_set_print(0);
   memset(&out, 0, sizeof(out));
   status = triangulate_status("zQ", &bad, &out, NULL);
+  triangle_set_print(1);
   check(status != 0, "a second error returns an error status");
+  check(strstr(triangle_messages(), "at least three input vertices") != NULL,
+        "the messages are kept with printing off");
 
   /* the library still works after an error */
   free_output(&refined);
   memset(&refined, 0, sizeof(refined));
   status = triangulate_status("pzQa0.05", &in, &refined, NULL);
   check(status == 0, "triangulate again after an error");
+  check(triangle_messages()[0] == '\0', "a quiet call clears the messages");
   check(refined.numberoftriangles == mesh.numberoftriangles,
         "same mesh after an error");
 
@@ -246,6 +253,24 @@ int main(void)
   status = triangulate_status("pzQq30a0.5", &in, &out, NULL);
   check(status == 0 && out.numberoftriangles == plain_count,
         "triangulate again after a test stops");
+  free_output(&out);
+
+  /* verbose messages longer than the buffer keep their last whole lines */
+  memset(&in, 0, sizeof(in));
+  in.numberofpoints = 4;
+  in.pointlist = square;
+  in.numberofsegments = 4;
+  in.segmentlist = edges;
+  memset(&out, 0, sizeof(out));
+  triangle_set_print(0);
+  status = triangulate_status("pzVVVa0.05", &in, &out, NULL);
+  triangle_set_print(1);
+  check(status == 0, "triangulate with verbose messages");
+  check(strlen(triangle_messages()) > 3000 &&
+        strlen(triangle_messages()) < 4096,
+        "verbose messages fill the buffer and fit in it");
+  check(strstr(triangle_messages(), "circumcenter computations") != NULL,
+        "verbose messages keep the last lines");
   free_output(&out);
 
   /* version and copyright */

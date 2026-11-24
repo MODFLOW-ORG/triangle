@@ -29,8 +29,8 @@ Run from the project root. Pixi is the canonical workflow and matches CI.
 - `src/triangle_status.c`, `src/triangle_status.h` — not part of Triangle:
   the library API that returns errors (`triangulate_status()`), takes the
   `u` switch's test (`triangle_set_unsuitable()`, with the library built
-  with `EXTERNAL_TEST`), and reports the versions and copyright (see Library
-  in `README.md`).
+  with `EXTERNAL_TEST`), keeps Triangle's messages (`triangle_messages()`),
+  and reports the versions and copyright (see Library in `README.md`).
   The shared library exports only the API: add a new API function to
   `src/triangle.def` (Windows), `src/triangle.map` (Linux), and
   `src/triangle.exports` (macOS).
@@ -57,8 +57,9 @@ Run from the project root. Pixi is the canonical workflow and matches CI.
   explain it in the commit message. Never remove or alter the copyright
   notices, including the one `triangle -h` prints. The changes so far use an
   integer as wide as a pointer for the pointer casts on 64-bit Windows (#2),
-  define `INEXACT` as `volatile` on ARM (#25), and call an error handler
-  from `triexit()` in the library build (#37). New library code goes in
+  define `INEXACT` as `volatile` on ARM (#25), and, in the library build,
+  call an error handler from `triexit()` (#37) and send `printf` to
+  `triangle_printf()` (#61). New library code goes in
   `src/triangle_status.c`, not in `triangle.c`.
 - **Floating point:** Triangle's robust predicates depend on IEEE double
   arithmetic without extended precision or contraction. The flags in

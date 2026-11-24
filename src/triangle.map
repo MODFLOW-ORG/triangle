@@ -5,6 +5,8 @@
     trifree;
     triangle_free;
     triangle_set_unsuitable;
+    triangle_messages;
+    triangle_set_print;
     triangle_version;
     triangle_release_version;
     triangle_copyright;
