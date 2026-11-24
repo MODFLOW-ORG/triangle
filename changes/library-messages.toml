@@ -1,0 +1,2 @@
+section = "features"
+description = "The library keeps the text Triangle prints during a call to `triangulate_status()`, such as the reason for an error, and `triangle_messages()` returns it (#61). `triangle_set_print()` stops the printing to standard output; the messages are still kept."

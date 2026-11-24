@@ -46,6 +46,14 @@ typedef int (*triangle_unsuitable_test)(const double *org, const double *dest,
 /* Set the u switch's test and the data passed to it; NULL clears it. */
 void triangle_set_unsuitable(triangle_unsuitable_test test, void *data);
 
+/* Text Triangle printed during the last call to triangulate_status(), such
+   as the reason for an error; at most the last 4095 characters. */
+const char *triangle_messages(void);
+
+/* Set whether Triangle's messages are printed to standard output (nonzero,
+   the default) or only kept. */
+void triangle_set_print(int print);
+
 /* Free an output array Triangle allocated. */
 void triangle_free(void *memptr);
 

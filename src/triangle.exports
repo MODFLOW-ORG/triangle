@@ -3,6 +3,8 @@ _triangulate_status
 _trifree
 _triangle_free
 _triangle_set_unsuitable
+_triangle_messages
+_triangle_set_print
 _triangle_version
 _triangle_release_version
 _triangle_copyright
