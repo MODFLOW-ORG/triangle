@@ -5011,24 +5011,27 @@ REAL *h;
   int eindex, findex, hindex;
   REAL enow, fnow;
 
+  /* MODFLOW-ORG modification: the next term of e or f is read only while    */
+  /*   its index is below the length, so the last step does not read past    */
+  /*   the end of the array; the value it read was never used.               */
   enow = e[0];
   fnow = f[0];
   eindex = findex = 0;
   if ((fnow > enow) == (fnow > -enow)) {
     Q = enow;
-    enow = e[++eindex];
+    if (++eindex < elen) enow = e[eindex];
   } else {
     Q = fnow;
-    fnow = f[++findex];
+    if (++findex < flen) fnow = f[findex];
   }
   hindex = 0;
   if ((eindex < elen) && (findex < flen)) {
     if ((fnow > enow) == (fnow > -enow)) {
       Fast_Two_Sum(enow, Q, Qnew, hh);
-      enow = e[++eindex];
+      if (++eindex < elen) enow = e[eindex];
     } else {
       Fast_Two_Sum(fnow, Q, Qnew, hh);
-      fnow = f[++findex];
+      if (++findex < flen) fnow = f[findex];
     }
     Q = Qnew;
     if (hh != 0.0) {
@@ -5037,10 +5040,10 @@ REAL *h;
     while ((eindex < elen) && (findex < flen)) {
       if ((fnow > enow) == (fnow > -enow)) {
         Two_Sum(Q, enow, Qnew, hh);
-        enow = e[++eindex];
+        if (++eindex < elen) enow = e[eindex];
       } else {
         Two_Sum(Q, fnow, Qnew, hh);
-        fnow = f[++findex];
+        if (++findex < flen) fnow = f[findex];
       }
       Q = Qnew;
       if (hh != 0.0) {
@@ -5050,7 +5053,7 @@ REAL *h;
   }
   while (eindex < elen) {
     Two_Sum(Q, enow, Qnew, hh);
-    enow = e[++eindex];
+    if (++eindex < elen) enow = e[eindex];
     Q = Qnew;
     if (hh != 0.0) {
       h[hindex++] = hh;
@@ -5058,7 +5061,7 @@ REAL *h;
   }
   while (findex < flen) {
     Two_Sum(Q, fnow, Qnew, hh);
-    fnow = f[++findex];
+    if (++findex < flen) fnow = f[findex];
     Q = Qnew;
     if (hh != 0.0) {
       h[hindex++] = hh;

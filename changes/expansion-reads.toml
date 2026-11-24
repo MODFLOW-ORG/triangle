@@ -1,0 +1,2 @@
+section = "fixes"
+description = "Triangle's exact arithmetic read one element past the end of an array in fast_expansion_sum_zeroelim(), a value it never used, which the address sanitizer reports as an error (#63). The read is removed; meshes are unchanged."

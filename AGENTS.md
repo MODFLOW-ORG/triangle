@@ -59,7 +59,8 @@ Run from the project root. Pixi is the canonical workflow and matches CI.
   integer as wide as a pointer for the pointer casts on 64-bit Windows (#2),
   define `INEXACT` as `volatile` on ARM (#25), and, in the library build,
   call an error handler from `triexit()` (#37) and send `printf` to
-  `triangle_printf()` (#61). New library code goes in
+  `triangle_printf()` (#61), and bound the reads of
+  `fast_expansion_sum_zeroelim()` (#63). New library code goes in
   `src/triangle_status.c`, not in `triangle.c`.
 - **Floating point:** Triangle's robust predicates depend on IEEE double
   arithmetic without extended precision or contraction. The flags in

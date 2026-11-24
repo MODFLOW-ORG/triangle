@@ -29,6 +29,7 @@ The macOS release requires macOS 15 or later. Building on an older macOS has not
 - **64-bit Windows (#2):** the pointer casts use `unsigned_long`, defined as `unsigned long long` on Windows, where `unsigned long` is 32 bits and cannot hold a pointer, and as `unsigned long` elsewhere.
 - **ARM (#25):** `INEXACT` is defined as `volatile` on ARM so that the exact-arithmetic predicates are not compiled into fused multiply-add instructions.
 - **Library errors (#37):** in the library build (`TRILIBRARY`), `triexit()` calls a handler before `exit()`, so that `triangulate_status()` can return the error to the caller instead of ending the program.
+- **Exact arithmetic (#63):** `fast_expansion_sum_zeroelim()` reads the next term of each expansion only while its index is below the length, so it no longer reads one element past the end of an array, a value it never used; meshes are unchanged.
 - **Library messages (#61):** in the library build, `printf` is defined as `triangle_printf()`, which prints Triangle's messages and keeps them for `triangle_messages()`.
 
 ## Library
